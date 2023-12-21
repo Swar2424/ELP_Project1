@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
-	"math"
 )
 
+var c, python, java bool
+
 func main() {
-	fmt.Println(math.pi)
+	var i int
+	fmt.Println(i, c, python, java)
 }
