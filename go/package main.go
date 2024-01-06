@@ -7,6 +7,7 @@ import (
 var c, python, java bool
 
 func main() {
-	var j int
-	fmt.Println(j, c, python, java, java)
+	var i int
+	fmt.Println(i, c, python, java, java)
+
 }
