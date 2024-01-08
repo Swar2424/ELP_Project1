@@ -34,4 +34,5 @@ func main() {
 	}
 
 	fmt.Println(dat_numb)
+	fmt.Println(Dijkstra(dat_numb, 0))
 }
