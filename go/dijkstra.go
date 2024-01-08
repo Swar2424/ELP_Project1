@@ -1,6 +1,6 @@
 package main
 
-func Dijkstra(graph [4][4]int, x int) []int { //on ne prend pas en compte le décalage
+func Dijkstra(graph [][]int, x int, Canal chan ([]int)) { //on ne prend pas en compte le décalage
 	N := len(graph[0])
 	tab_visit := make([]int, N)
 	tab_dist := make([]int, N)
@@ -18,7 +18,7 @@ func Dijkstra(graph [4][4]int, x int) []int { //on ne prend pas en compte le dé
 		for i := 0; i < N; i++ {
 			if tab_visit[i] == 0 {
 				for j := 0; j < N; j++ {
-					if graph[i][j] != 1 && graph[i][j] != 0 {
+					if graph[i][j] != 0 {
 						dist := graph[i][j] + tab_dist[j]
 						if dist < tab_dist[i] {
 							tab_dist[i] = dist
@@ -35,5 +35,5 @@ func Dijkstra(graph [4][4]int, x int) []int { //on ne prend pas en compte le dé
 			}
 		}
 	}
-	return (tab_dist)
+	Canal <- tab_dist
 }

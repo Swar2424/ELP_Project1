@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func main() {
-	Canal := make(chan ([][]int))
+	Canal := make(chan ([]int))
 	dat_numb := Load_data("./textfile_test.txt", 4)
 	fmt.Println(dat_numb)
 
