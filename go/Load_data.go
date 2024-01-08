@@ -1,18 +1,16 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 )
 
-func main() {
+func Load_data(file string, N int) [][]int {
 	b := make([]byte, 1)
-	N := 4
-	var dat_numb [4][4]int
+	dat_numb := Create_matrix(N)
 	var dat_str, dat_str_list string
 
-	dat, _ := os.Open("./textfile_test.txt")
+	dat, _ := os.Open(file)
 
 	for i := 0; i < N; {
 		for j := 0; j < N; {
@@ -33,5 +31,5 @@ func main() {
 		dat.Read(b)
 	}
 
-	fmt.Println(dat_numb)
+	return (dat_numb)
 }
