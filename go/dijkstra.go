@@ -18,7 +18,7 @@ func Dijkstra(graph [][]int, x int, Canal chan ([]int)) { //on ne prend pas en c
 		for i := 0; i < N; i++ {
 			if tab_visit[i] == 0 {
 				for j := 0; j < N; j++ {
-					if graph[i][j] != 0 {
+					if graph[i][j] != 0 && tab_visit[j] == 1 {
 						dist := graph[i][j] + tab_dist[j]
 						if dist < tab_dist[i] {
 							tab_dist[i] = dist
