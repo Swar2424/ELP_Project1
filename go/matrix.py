@@ -14,7 +14,7 @@ def random_adjacency_matrix(n):
 
     return matrix
 
-N = 500
+N = 5
 f = open(f"data", "w")
 mat = random_adjacency_matrix(N)
 for i in range(N) :

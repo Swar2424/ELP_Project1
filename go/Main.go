@@ -7,16 +7,21 @@ import (
 
 func main() {
 	time_start := time.Now()
-	Canal := make(chan ([]int))
-	n := 500
+	Canal1 := make(chan ([][]int))
+	Canal2 := make(chan (int))
+	Canal3 := make(chan (int))
+	n := 5
 	dat_numb := Load_data("./data", n)
+	table := make([]int, n)
 
-	for i := 0; i < n; i++ {
-		go Dijkstra(dat_numb, i, Canal)
+	go Launch_Dijkstra(dat_numb, Canal1)
+	go Launch_Counting(dat_numb, Canal1, Canal2, Canal3)
+
+	for i := range Canal2 {
+		table[i] += 1
 	}
-	for i := 0; i < n; i++ {
-		fmt.Println(<-Canal)
-	}
+
+	fmt.Println(table)
 
 	time_end := time.Now()
 	fmt.Println(time_end.Sub(time_start))
