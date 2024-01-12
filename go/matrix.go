@@ -22,7 +22,7 @@ func random_adjacency_matrix(n int) [][]int {
 
 func main() {
 	N := 6
-	file, err := os.Create("data")
+	file, err := os.Create("./dijkstra_gorouting/data")
 	if err != nil {
 		panic(err)
 	}
@@ -32,7 +32,7 @@ func main() {
 	writer := bufio.NewWriter(file)
 	for i := 0; i < N; i++ {
 		for j := 0; j < N; j++ {
-			number := strconv.Itoa(matrix[i][j])
+			number := strconv.Itoa(matrix[i][j]) // convertir en string un int
 			_, err = fmt.Fprint(writer, number+" ")
 			if err != nil {
 				panic(err)
