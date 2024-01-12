@@ -5,12 +5,17 @@ import (
 	"time"
 )
 
+type Table_int struct {
+	Table  *[][]int
+	Origin int
+}
+
 func main() {
 	time_start := time.Now()
-	Canal1 := make(chan (*[][]int))
+	Canal1 := make(chan Table_int)
 	Canal2 := make(chan (int))
 	Canal3 := make(chan (int))
-	n := 30
+	n := 300
 	dat_numb := Load_data("./data", n)
 	table := make([]int, n)
 
@@ -21,7 +26,7 @@ func main() {
 		table[i] += 1
 	}
 
-	fmt.Println(table)
+	//fmt.Println(table)
 
 	time_end := time.Now()
 	fmt.Println(time_end.Sub(time_start))

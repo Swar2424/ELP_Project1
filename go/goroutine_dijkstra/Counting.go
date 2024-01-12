@@ -9,17 +9,13 @@ func Counting(slice []int, dijkstra [][]int, Canal2 chan (int), Canal3 chan (int
 	Canal3 <- -1
 }
 
-func Launch_Counting(graph [][]int, Canal1 chan (*[][]int), Canal2 chan int, Canal3 chan int) {
+func Launch_Counting(graph [][]int, Canal1 chan (Table_int), Canal2 chan int, Canal3 chan int) {
 	count := 0
 
 	for i := 0; i < len(graph); i++ {
-		dijkstra := <-Canal1
-		origin := -1
-		for _, slice := range *dijkstra {
-			if slice[1] == 0 {
-				origin = slice[0]
-			}
-		}
+		rep := <-Canal1
+		dijkstra := rep.Table
+		origin := rep.Origin
 		for _, slice := range *dijkstra {
 			count += 1
 			go Counting(slice, *dijkstra, Canal2, Canal3, origin)
