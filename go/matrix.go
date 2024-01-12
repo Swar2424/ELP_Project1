@@ -8,20 +8,43 @@ import (
 	"strconv"
 )
 
-func random_adjacency_matrix(n int) [][]int {
+func random_adjacency_matrix(n int, max int) [][]int {
 	matrix := Create_matrix(n)
 	for i := 0; i < n; i++ {
-		matrix[i][i] = 0
 		for j := 0; j < n; j++ {
-			matrix[j][i] = rand.Intn(10) + 1
+			matrix[j][i] = rand.Intn(max) + 1
 			matrix[i][j] = matrix[j][i]
 		}
+		matrix[i][i] = 0
 	}
 	return matrix
 }
 
+func write(file *os.File, matrix [][]int, N int) {
+	writer := bufio.NewWriter(file)
+
+	for i := 0; i < N; i++ {
+		for j := 0; j < N; j++ {
+			number := strconv.Itoa(matrix[i][j]) // convertir en string un int
+			_, err := fmt.Fprint(writer, number+" ")
+			if err != nil {
+				panic(err)
+			}
+		}
+		_, err := fmt.Fprint(writer, "\n")
+		if err != nil {
+			panic(err)
+		}
+		err = writer.Flush()
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
 func main() {
-	N := 6
+	N := 500
+	max := 100
 	file2, err2 := os.Create("./gorouting_dijkstra/data")
 	if err2 != nil {
 		panic(err2)
@@ -33,23 +56,9 @@ func main() {
 	defer file.Close()
 	defer file2.Close()
 
-	matrix := random_adjacency_matrix(N)
-	writer := bufio.NewWriter(file)
-	for i := 0; i < N; i++ {
-		for j := 0; j < N; j++ {
-			number := strconv.Itoa(matrix[i][j]) // convertir en string un int
-			_, err = fmt.Fprint(writer, number+" ")
-			if err != nil {
-				panic(err)
-			}
-		}
-		_, err = fmt.Fprint(writer, "\n")
-		if err != nil {
-			panic(err)
-		}
-		err = writer.Flush()
-		if err != nil {
-			panic(err)
-		}
-	}
+	matrix := random_adjacency_matrix(N, max)
+
+	write(file, matrix, N)
+	write(file2, matrix, N)
+
 }
