@@ -1,9 +1,6 @@
 package main
 
-import "fmt"
-
 func Dijkstra(graph [][]int, x int, Canal chan ([][]int)) { //on ne prend pas en compte le décalage
-	fmt.Println(x)
 	N := len(graph[0])
 	tab_visit := make([]int, N)
 	tab_dist := make([][]int, N)
@@ -20,6 +17,7 @@ func Dijkstra(graph [][]int, x int, Canal chan ([][]int)) { //on ne prend pas en
 
 	for fin < 1 {
 		for i := 0; i < N; i++ {
+
 			if tab_visit[i] == 0 {
 				for j := 0; j < N; j++ {
 					if graph[i][j] != 0 && tab_visit[j] == 1 {
@@ -39,7 +37,6 @@ func Dijkstra(graph [][]int, x int, Canal chan ([][]int)) { //on ne prend pas en
 			}
 		}
 	}
-	fmt.Println(tab_dist)
 	Canal <- tab_dist
 }
 
