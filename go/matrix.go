@@ -22,7 +22,6 @@ func random_adjacency_matrix(n int) [][]int {
 
 func main() {
 	N := 6
-	file, err := os.Create("./dijkstra_gorouting/data")
 	file, err := os.Create("./gorouting_dijkstra/data")
 	if err != nil {
 		panic(err)

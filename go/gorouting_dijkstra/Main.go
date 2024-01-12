@@ -6,24 +6,22 @@ import (
 )
 
 func main() {
-	print("panik \n")
 	time_start := time.Now()
-	print("panik \n")
-	Canal := make(chan ([]int))
-	n := 6
-
+	Canal1 := make(chan ([][]int))
+	Canal2 := make(chan (int))
+	Canal3 := make(chan (int))
+	n := 5
 	dat_numb := Load_data("./data", n)
-	print("panik \n")
+	table := make([]int, n)
 
-	for i := 0; i < n; i++ {
-		fmt.Print("zebi\n")
-		go Dijkstra(dat_numb, i, Canal)
-		print("panik \n")
+	go Launch_Dijkstra(dat_numb, Canal1)
+	go Launch_Counting(dat_numb, Canal1, Canal2, Canal3)
+
+	for i := range Canal2 {
+		table[i] += 1
 	}
-	for i := 0; i < n; i++ {
-		fmt.Print("zbi\n")
-		fmt.Println(<-Canal)
-	}
+
+	fmt.Println(table)
 
 	time_end := time.Now()
 	fmt.Println(time_end.Sub(time_start))
