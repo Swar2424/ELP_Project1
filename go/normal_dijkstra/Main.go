@@ -8,7 +8,7 @@ import (
 func main() {
 
 	time_start := time.Now()
-	n := 30
+	n := 300
 	dat_numb := Load_data("./data", n)
 	table := make([]int, n)
 
@@ -19,7 +19,7 @@ func main() {
 		}
 	}
 
-	fmt.Println(table)
+	//fmt.Println(table)
 
 	time_end := time.Now()
 	fmt.Println(time_end.Sub(time_start))
