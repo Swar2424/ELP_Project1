@@ -22,11 +22,16 @@ func random_adjacency_matrix(n int) [][]int {
 
 func main() {
 	N := 6
-	file, err := os.Create("./gorouting_dijkstra/data")
+	file2, err2 := os.Create("./gorouting_dijkstra/data")
+	if err2 != nil {
+		panic(err2)
+	}
+	file, err := os.Create("./normal_dijkstra/data")
 	if err != nil {
 		panic(err)
 	}
 	defer file.Close()
+	defer file2.Close()
 
 	matrix := random_adjacency_matrix(N)
 	writer := bufio.NewWriter(file)

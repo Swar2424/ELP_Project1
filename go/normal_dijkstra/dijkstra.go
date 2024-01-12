@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func Dijkstra(graph [][]int, x int, Canal chan ([][]int)) { //on ne prend pas en compte le décalage
+func Dijkstra(graph [][]int, x int) [][]int { //on ne prend pas en compte le décalage
 	fmt.Println(x)
 	N := len(graph[0])
 	tab_visit := make([]int, N)
@@ -17,7 +17,6 @@ func Dijkstra(graph [][]int, x int, Canal chan ([][]int)) { //on ne prend pas en
 			tab_dist[i] = []int{i, 90000}
 		}
 	}
-
 	for fin < 1 {
 		for i := 0; i < N; i++ {
 			if tab_visit[i] == 0 {
@@ -40,11 +39,5 @@ func Dijkstra(graph [][]int, x int, Canal chan ([][]int)) { //on ne prend pas en
 		}
 	}
 	fmt.Println(tab_dist)
-	Canal <- tab_dist
-}
-
-func Launch_Dijkstra(graph [][]int, Canal chan ([][]int)) {
-	for i := 0; i < len(graph); i++ {
-		go Dijkstra(graph, i, Canal)
-	}
+	return (tab_dist)
 }
