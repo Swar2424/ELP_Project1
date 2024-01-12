@@ -10,7 +10,7 @@ func main() {
 	Canal1 := make(chan ([][]int))
 	Canal2 := make(chan (int))
 	Canal3 := make(chan (int))
-	n := 5
+	n := 6
 	dat_numb := Load_data("./data", n)
 	table := make([]int, n)
 
