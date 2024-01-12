@@ -1,6 +1,6 @@
 package main
 
-func Dijkstra(graph [][]int, x int, Canal chan ([][]int)) { //on ne prend pas en compte le décalage
+func Dijkstra(graph [][]int, x int, Canal chan (*[][]int)) { //on ne prend pas en compte le décalage
 	N := len(graph[0])
 	tab_visit := make([]int, N)
 	tab_dist := make([][]int, N)
@@ -37,10 +37,10 @@ func Dijkstra(graph [][]int, x int, Canal chan ([][]int)) { //on ne prend pas en
 			}
 		}
 	}
-	Canal <- tab_dist
+	Canal <- &tab_dist
 }
 
-func Launch_Dijkstra(graph [][]int, Canal chan ([][]int)) {
+func Launch_Dijkstra(graph [][]int, Canal chan (*[][]int)) {
 	for i := 0; i < len(graph); i++ {
 		go Dijkstra(graph, i, Canal)
 	}

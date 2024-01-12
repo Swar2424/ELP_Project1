@@ -7,7 +7,7 @@ import (
 
 func main() {
 	time_start := time.Now()
-	Canal1 := make(chan ([][]int))
+	Canal1 := make(chan (*[][]int))
 	Canal2 := make(chan (int))
 	Canal3 := make(chan (int))
 	n := 30
