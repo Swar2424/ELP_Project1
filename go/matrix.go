@@ -43,7 +43,7 @@ func write(file *os.File, matrix [][]int, N int) {
 }
 
 func main() {
-	N := 500
+	N := 30
 	max := 100
 	file2, err2 := os.Create("./gorouting_dijkstra/data")
 	if err2 != nil {

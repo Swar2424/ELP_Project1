@@ -8,7 +8,7 @@ import (
 func main() {
 
 	time_start := time.Now()
-	n := 500
+	n := 30
 	dat_numb := Load_data("./data", n)
 	table := make([]int, n)
 
