@@ -35,5 +35,6 @@ func Dijkstra(graph [][]int, x int, Canal chan ([]int)) { //on ne prend pas en c
 			}
 		}
 	}
+	print("end\n")
 	Canal <- tab_dist
 }
