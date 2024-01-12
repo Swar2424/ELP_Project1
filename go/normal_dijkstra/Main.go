@@ -6,20 +6,20 @@ import (
 )
 
 func main() {
+
 	time_start := time.Now()
-	Canal1 := make(chan ([][]int))
-	Canal2 := make(chan (int))
-	Canal3 := make(chan (int))
 	n := 6
 	dat_numb := Load_data("./data", n)
 	table := make([]int, n)
 	print(dat_numb)
 
-	go Launch_Dijkstra(dat_numb, Canal1)
-	go Launch_Counting(dat_numb, Canal1, Canal2, Canal3)
+	for i := 0; i < n; i++ {
 
-	for i := range Canal2 {
-		table[i] += 1
+		dij := Dijkstra(dat_numb, i)
+		fmt.Println(dij)
+		for _, slice := range dij {
+			table = Counting(slice, dij, i, table)
+		}
 	}
 
 	fmt.Println(table)
