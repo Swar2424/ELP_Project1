@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 )
@@ -10,7 +9,6 @@ func Load_data(file string, N int) [][]int {
 	b := make([]byte, 1)
 	dat_numb := Create_matrix(N)
 	var dat_str, dat_str_list string
-	fmt.Println("zebi")
 
 	dat, _ := os.Open(file)
 
@@ -27,12 +25,10 @@ func Load_data(file string, N int) [][]int {
 				j++
 				dat_str_list = ""
 			}
-			fmt.Println(j)
 		}
 		i++
 		dat.Read(b)
 		dat.Read(b)
-		fmt.Println(i)
 	}
 
 	return (dat_numb)

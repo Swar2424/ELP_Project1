@@ -28,7 +28,6 @@ func Load_data(file string, N int) [][]int {
 		}
 		i++
 		dat.Read(b)
-		dat.Read(b)
 	}
 
 	return (dat_numb)
