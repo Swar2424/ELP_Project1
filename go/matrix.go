@@ -31,7 +31,7 @@ func write(file *os.File, matrix [][]int, N int) {
 				panic(err)
 			}
 		}
-		_, err := fmt.Fprint(writer, "\n")
+		_, err := fmt.Fprint(writer, "\r\n")
 		if err != nil {
 			panic(err)
 		}
@@ -43,7 +43,7 @@ func write(file *os.File, matrix [][]int, N int) {
 }
 
 func main() {
-	N := 300
+	N := 10
 	max := 100
 	file2, err2 := os.Create("./goroutine_dijkstra/data")
 	if err2 != nil {
