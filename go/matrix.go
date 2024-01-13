@@ -31,7 +31,7 @@ func write(file *os.File, matrix [][]int, N int) {
 				panic(err)
 			}
 		}
-		_, err := fmt.Fprint(writer, "\n")
+		_, err := fmt.Fprint(writer, "\r\n")
 		if err != nil {
 			panic(err)
 		}

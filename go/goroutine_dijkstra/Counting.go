@@ -15,7 +15,6 @@ func Launch_Counting(graph [][]int, Canal1 chan (Table_int), Canal2 chan int, Ca
 	for i := 0; i < n; i++ {
 		rep := <-Canal1
 		dijkstra := rep.Table
-		//fmt.Println(dijkstra)
 		origin := rep.Origin
 		for _, slice := range *dijkstra {
 			go Counting(slice, *dijkstra, Canal2, Canal3, origin)

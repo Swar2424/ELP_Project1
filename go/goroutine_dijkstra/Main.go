@@ -18,7 +18,6 @@ func main() {
 	n := 10
 	dat_numb := Load_data("./data", n)
 	table := make([]int, n)
-	//fmt.Println(dat_numb)
 
 	go Launch_Dijkstra(dat_numb, Canal1)
 	go Launch_Counting(dat_numb, Canal1, Canal2, Canal3)
