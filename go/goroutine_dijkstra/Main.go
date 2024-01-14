@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"slices"
 	"time"
 )
 
@@ -15,7 +16,7 @@ func main() {
 	Canal1 := make(chan Table_int)
 	Canal2 := make(chan (int))
 	Canal3 := make(chan (int))
-	n := 10
+	n := 2000
 	dat_numb := Load_data("./data", n)
 	table := make([]int, n)
 
@@ -27,6 +28,6 @@ func main() {
 	}
 
 	time_end := time.Now()
-	fmt.Println(table)
+	fmt.Println(slices.Max(table), slices.Min(table))
 	fmt.Println(time_end.Sub(time_start))
 }
