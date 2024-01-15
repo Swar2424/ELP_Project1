@@ -22,11 +22,16 @@ func tab_to_str(data [][]int) string {
 	return tab
 }
 
-func slice_to_str(data []int) string {
-	var tab string
+/*
+func str_to_tab(data string)) [][]int {
+	var tab [][]int
 	n := len(data)
 	for i := 0; i < n; i++ {
-		tab += strconv.Itoa(data[i]) + " "
+		for j := 0; j < n; j++ {
+			tab += strconv.Itoa(data[i][j]) + " "
+		}
+		tab += "\r\n"
 	}
 	return tab
 }
+*/
