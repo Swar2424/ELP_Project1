@@ -43,22 +43,29 @@ func write(file *os.File, matrix [][]int, N int) {
 }
 
 func main() {
-	N := 2000
+	N := 20
 	max := 100
-	file2, err2 := os.Create("./goroutine_dijkstra/data")
-	if err2 != nil {
-		panic(err2)
-	}
-	file, err := os.Create("./normal_dijkstra/data")
+
+	file, err := os.Create("./goroutine_dijkstra/data")
 	if err != nil {
 		panic(err)
 	}
+	file2, err2 := os.Create("./normal_dijkstra/data")
+	if err2 != nil {
+		panic(err2)
+	}
+	file3, err3 := os.Create("./client_dijkstra/data")
+	if err3 != nil {
+		panic(err3)
+	}
+
 	defer file.Close()
 	defer file2.Close()
+	defer file3.Close()
 
 	matrix := random_adjacency_matrix(N, max)
 
 	write(file, matrix, N)
 	write(file2, matrix, N)
-
+	write(file3, matrix, N)
 }

@@ -9,7 +9,7 @@ import (
 func main() {
 
 	time_start := time.Now()
-	n := 2000
+	n := 20
 	dat_numb := Load_data("./data", n)
 	table := make([]int, n)
 
