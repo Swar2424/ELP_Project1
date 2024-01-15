@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"slices"
 	"time"
 )
 
 func main() {
 
 	time_start := time.Now()
-	n := 500
+	n := 2000
 	dat_numb := Load_data("./data", n)
 	table := make([]int, n)
 
@@ -19,8 +20,7 @@ func main() {
 		}
 	}
 
-	fmt.Println(table)
-
 	time_end := time.Now()
+	fmt.Println(slices.Max(table), slices.Min(table))
 	fmt.Println(time_end.Sub(time_start))
 }
