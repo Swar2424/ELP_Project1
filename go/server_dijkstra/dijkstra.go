@@ -1,6 +1,6 @@
 package main
 
-func Dijkstra(graph [][]int, x int, Canal chan (Table_int)) {
+func Dijkstra(graph [][]int, x int) Table_int {
 	N := len(graph[0])
 	tab_visit := make([]int, N)
 	tab_dist := make([][]int, N)
@@ -42,11 +42,25 @@ func Dijkstra(graph [][]int, x int, Canal chan (Table_int)) {
 	}
 	rep := Table_int{&tab_dist, x}
 
-	Canal <- rep
+	return (rep)
 }
 
-func Launch_Dijkstra(graph [][]int, Canal chan (Table_int)) {
-	for i := 0; i < len(graph); i++ {
-		go Dijkstra(graph, i, Canal)
+func Worker_dijkstra(graph [][]int, Jobs chan int, Results chan (Table_int)) {
+	for j := range Jobs {
+		Results <- Dijkstra(graph, j)
 	}
+}
+
+func Launcher(n int, Jobs chan int, Results_dij chan Table_int, Results_count chan int, Count_go chan int) {
+	Counter_go := n
+	for i := 0; i < n; i++ {
+		Jobs <- i
+	}
+	for Counter_go != 0 {
+		Counter_go += <-Count_go
+	}
+	close(Count_go)
+	close(Results_count)
+	close(Results_dij)
+	close(Jobs)
 }
