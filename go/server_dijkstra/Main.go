@@ -12,14 +12,10 @@ conn.Close()
 */
 
 import (
-	"bufio"
 	"fmt"
-	"io"
 	"net"
 	"runtime"
 	"slices"
-	"strconv"
-	"strings"
 )
 
 type Table_int struct {
@@ -61,26 +57,43 @@ func handleClient(conn net.Conn) {
 	defer conn.Close()
 
 	// Read and process data from the client
-	n := 20
-	tableau := Create_matrix(n)
-	reader := bufio.NewReader(conn)
-	for i := 0; i < n; i++ {
-		message, _ := reader.ReadString('\r')
-		k := strings.Split(message, " ")
-		for j := 0; j < n; j++ {
-			tableau[i][j], _ = strconv.Atoi(k[j])
-		}
-		message, _ = reader.ReadString('\n')
-	}
-	envoie := dijkstra_goroutine(tableau)
-	// Write data back to the client
-	tab := slice_to_str(envoie)
-
-	_, err := io.WriteString(conn, fmt.Sprintf(tab))
+	n := 1000
+	matrix, err := receiveMatrix(conn)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
+	/*
+		tableau := Create_matrix(n)
+		reader := bufio.NewReader(conn)
+		for i := 0; i < n; i++ {
+			message, _ := reader.ReadString('\r')
+			k := strings.Split(message, " ")
+			for j := 0; j < n; j++ {
+				tableau[i][j], _ = strconv.Atoi(k[j])
+			}
+			message, _ = reader.ReadString('\n')
+		}
+	*/
+	Donnees := dijkstra_goroutine(matrix.Data)
+	// Write data back to the client
+	data := Matrix{
+		Rows:    n,
+		Columns: n,
+		Data:    Donnees,
+	}
+	err = sendMatrix(conn, data)
+	if err != nil {
+		fmt.Println("Erreur lors de l'envoi de la matrice :", err)
+		return
+	}
+	/*
+		_, err := io.WriteString(conn, fmt.Sprintf(tab))
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+	*/
 }
 
 func main() {
@@ -106,5 +119,4 @@ func main() {
 		// Handle client connection in a goroutine
 		go handleClient(conn)
 	}
-
 }

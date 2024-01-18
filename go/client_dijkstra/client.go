@@ -18,12 +18,8 @@ io.WriteString(conn, fmt.Sprintf(Coucou %d\n, i))
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"io"
 	"net"
-	"strconv"
-	"strings"
 )
 
 func main() {
@@ -36,25 +32,48 @@ func main() {
 	defer conn.Close()
 
 	// Send data to the server
-	n := 20
-	data := Load_data("./data", n)
-	tab := tab_to_str(data)
-	_, err = io.WriteString(conn, fmt.Sprintf(tab))
+	n := 1000
+	matrice := Load_data("./data", n)
+	data := Matrix{
+		Rows:    n,
+		Columns: n,
+		Data:    matrice,
+	}
+	err = sendMatrix(conn, data)
 	if err != nil {
-		fmt.Println("Error:", err)
+		fmt.Println("Erreur lors de l'envoi de la matrice :", err)
 		return
 	}
+	/*
+		print("panik! ")
+		tab := tab_to_str(data)
+		print("panik! ")
+		_, err = io.WriteString(conn, fmt.Sprintf(tab))
+		print("panik! ")
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+	*/
 
 	// Read and process data from the server
-	tableau := make([]int, n)
-	reader := bufio.NewReader(conn)
-	message, _ := reader.ReadString('\r')
-	k := strings.Split(message, " ")
-	for j := 0; j < n; j++ {
-		tableau[j], _ = strconv.Atoi(k[j])
+	matrix, err := receiveMatrix(conn)
+	if err != nil {
+		fmt.Println("Erreur lors de la réception de la matrice :", err)
+		return
 	}
-	message, _ = reader.ReadString('\n')
+	fmt.Println(matrix.Data)
 
-	fmt.Println(tableau)
+	/*
+		tableau := make([]int, n)
+		reader := bufio.NewReader(conn)
+		message, _ := reader.ReadString('\r')
+		k := strings.Split(message, " ")
+		for j := 0; j < n; j++ {
+			tableau[j], _ = strconv.Atoi(k[j])
+		}
+		message, _ = reader.ReadString('\n')
 
+		fmt.Println(tableau)
+	*/
 }
