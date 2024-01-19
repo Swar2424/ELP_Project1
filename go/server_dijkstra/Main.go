@@ -24,18 +24,12 @@ type Table_int struct {
 }
 
 func dijkstra_goroutine(dat_numb [][]int) []int {
-	//Canal1 := make(chan Table_int)
-	//Canal2 := make(chan (int))
-	//Canal3 := make(chan (int))
 	n := len(dat_numb)
 	go_num := runtime.NumCPU() / 2
-	//time_start := time.Now()
-	//n := 2000
 	Jobs := make(chan int, n)
 	Results_dij := make(chan Table_int, n)
 	Results_count := make(chan (int))
 	Count_go := make(chan (int))
-	//dat_numb := Load_data("./data", n)
 	table := make([]int, n)
 
 	for i := 0; i < go_num; i++ {
@@ -63,22 +57,12 @@ func handleClient(conn net.Conn) {
 		fmt.Println("Error:", err)
 		return
 	}
-	/*
-		tableau := Create_matrix(n)
-		reader := bufio.NewReader(conn)
-		for i := 0; i < n; i++ {
-			message, _ := reader.ReadString('\r')
-			k := strings.Split(message, " ")
-			for j := 0; j < n; j++ {
-				tableau[i][j], _ = strconv.Atoi(k[j])
-			}
-			message, _ = reader.ReadString('\n')
-		}
-	*/
-	Donnees := dijkstra_goroutine(matrix.Data)
+	Slice := dijkstra_goroutine(matrix.Data)
+	Donnees := make([][]int, 1)
+	Donnees[0] = Slice
 	// Write data back to the client
 	data := Matrix{
-		Rows:    n,
+		Rows:    1,
 		Columns: n,
 		Data:    Donnees,
 	}
@@ -87,13 +71,6 @@ func handleClient(conn net.Conn) {
 		fmt.Println("Erreur lors de l'envoi de la matrice :", err)
 		return
 	}
-	/*
-		_, err := io.WriteString(conn, fmt.Sprintf(tab))
-		if err != nil {
-			fmt.Println("Error:", err)
-			return
-		}
-	*/
 }
 
 func main() {
