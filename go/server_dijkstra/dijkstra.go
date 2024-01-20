@@ -1,5 +1,12 @@
 package main
 
+//definition de la structure Table_int qui est un pointeur de matrice
+type Table_int struct {
+	Table  *[][]int
+	Origin int
+}
+
+//Fonction dijkstra
 func Dijkstra(graph [][]int, x int) Table_int {
 	N := len(graph[0])
 	tab_visit := make([]int, N)
@@ -45,12 +52,14 @@ func Dijkstra(graph [][]int, x int) Table_int {
 	return (rep)
 }
 
+//Fonction pour les worker pools
 func Worker_dijkstra(graph [][]int, Jobs chan int, Results chan (Table_int)) {
 	for j := range Jobs {
 		Results <- Dijkstra(graph, j)
 	}
 }
 
+//Fonction qui envoie les infos aux worker pools et qui récupère les résultats
 func Launcher(n int, Jobs chan int, Results_dij chan Table_int, Results_count chan int, Count_go chan int) {
 	Counter_go := n
 	for i := 0; i < n; i++ {

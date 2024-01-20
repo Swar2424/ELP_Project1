@@ -18,11 +18,7 @@ import (
 	"slices"
 )
 
-type Table_int struct {
-	Table  *[][]int
-	Origin int
-}
-
+// Fonction pour lancer dijkstra avec les goroutines
 func dijkstra_goroutine(dat_numb [][]int) []int {
 	n := len(dat_numb)
 	go_num := runtime.NumCPU() / 2
@@ -50,22 +46,23 @@ func dijkstra_goroutine(dat_numb [][]int) []int {
 func handleClient(conn net.Conn) {
 	defer conn.Close()
 
-	// Read and process data from the client
 	n := 1000
+	// On utilise la fonction receiveMatrix pour récupérer la matrice envoyée par les clients
 	matrix, err := receiveMatrix(conn)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
 	Slice := dijkstra_goroutine(matrix.Data)
+	//On récupère dans une ligne de matrice la matrice renvoyée par Dijkstra
 	Donnees := make([][]int, 1)
 	Donnees[0] = Slice
-	// Write data back to the client
 	data := Matrix{
 		Rows:    1,
 		Columns: n,
 		Data:    Donnees,
 	}
+	// On envoie la matrice optenue avec Dijkstra au client
 	err = sendMatrix(conn, data)
 	if err != nil {
 		fmt.Println("Erreur lors de l'envoi de la matrice :", err)
@@ -75,8 +72,7 @@ func handleClient(conn net.Conn) {
 
 func main() {
 
-	//Openning TCP server connexion
-
+	//On ouvre le canal TCP
 	listener, err := net.Listen("tcp", "localhost:8000")
 	if err != nil {
 		fmt.Println("Error:", err)
@@ -86,14 +82,13 @@ func main() {
 
 	fmt.Println("Server is listening on port 8000")
 
+	// On accepte plusieurs clients en parallèles grâce aux goroutines
 	for {
-		// Accept incoming connections
 		conn, err := listener.Accept()
 		if err != nil {
 			fmt.Println("Error:", err)
 			continue
 		}
-		// Handle client connection in a goroutine
 		go handleClient(conn)
 	}
 }
