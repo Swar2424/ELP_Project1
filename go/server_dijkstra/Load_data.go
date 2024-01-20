@@ -14,8 +14,8 @@ func Load_data(file string, N int) [][]int {
 
 	for i := 0; i < N; {
 		for j := 0; j < N; {
-			dat_read, _ := dat.Read(b)
-			dat_str = string(b[:dat_read])
+			dat.Read(b)
+			dat_str = string(b)
 
 			if dat_str != " " {
 				dat_str_list += dat_str
