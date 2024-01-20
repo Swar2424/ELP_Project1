@@ -11,6 +11,7 @@ import Html exposing (Html, text, pre)
 import Http
 import Random
 import List
+import Json.Decode exposing (Decoder, map2, field, int, string)
 
 
 
@@ -34,7 +35,14 @@ type Model
   = Failure
   | Loading
   | FullText String
-  | OneWord { word : String}
+  | OneWord String
+  | SuccessDef Def
+  | FailureBad
+
+
+type alias Def = { word : String,
+  origin : String
+  } 
 
 
 init : () -> (Model, Cmd Msg)
@@ -54,6 +62,7 @@ init _ =
 type Msg
   = GotText (Result Http.Error String)
   | RandomNumber Int
+  | GotDef (Result Http.Error Def)
 
 
 
@@ -69,10 +78,29 @@ update msg model =
           (Failure, Cmd.none)
         
     RandomNumber x -> case model of
-          FullText words -> (OneWord{ word = randomWord x (String.split " " words)}, Cmd.none)
+          FullText words -> case OneWord (randomWord x (String.split " " words)) of
+            OneWord word -> (OneWord word, 
+              Http.get
+                { url = ("https://api.dictionaryapi.dev/api/v2/entries/en/" ++ (word))
+                , expect = Http.expectJson GotDef defDecoder
+                })
+            Failure -> (Failure, Cmd.none)
+            Loading -> (Failure, Cmd.none)
+            FullText _ -> (Failure, Cmd.none)
+            SuccessDef _ -> (Failure, Cmd.none)
+            FailureBad -> (Failure, Cmd.none)
+              
+
           Failure -> (Failure, Cmd.none)
           Loading -> (Failure, Cmd.none)
           OneWord _ -> (Failure, Cmd.none)
+          SuccessDef _ -> (Failure, Cmd.none)
+          FailureBad -> (Failure, Cmd.none)
+
+    GotDef result -> case result of
+        Ok def -> (SuccessDef def, Cmd.none)
+        Err _ -> (FailureBad, Cmd.none)
+          
 
 
 
@@ -92,7 +120,10 @@ view : Model -> Html Msg
 view model =
   case model of
     Failure ->
-      text "I was unable to load your book."
+      text "There is an error somewhere."
+
+    FailureBad ->
+      text "No dico"
 
     Loading ->
       text "Loading..."
@@ -101,7 +132,10 @@ view model =
       pre [] [ text fullText ]
 
     OneWord word ->
-      pre [] [ text word.word ]
+      pre [] [ text ("https://api.dictionaryapi.dev/api/v2/entries/en/" ++ (word)) ]
+
+    SuccessDef def ->
+      pre [] [ text def.origin ]
 
 
 randomWord : Int -> List String -> String
@@ -115,7 +149,9 @@ roll n = Random.int 0 n
 pick : Int -> List a -> Maybe a
 pick n list = List.head (List.drop n list)
 
-getLast : (List a) -> (Maybe a)
-getLast liste = case List.reverse liste of
-    (x::xs) -> Just x
-    [] -> Nothing
+defDecoder : Decoder Def
+defDecoder =
+  map2 Def
+    (field "word" string)
+    (field "origin" string)
+
