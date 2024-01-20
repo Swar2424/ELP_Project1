@@ -43,7 +43,7 @@ func write(file *os.File, matrix [][]int, N int) {
 }
 
 func main() {
-	N := 2000
+	N := 1000
 	max := 100
 
 	file, err := os.Create("./goroutine_dijkstra/data")
@@ -54,7 +54,7 @@ func main() {
 	if err2 != nil {
 		panic(err2)
 	}
-	file3, err3 := os.Create("./server_dijkstra/data")
+	file3, err3 := os.Create("./client_dijkstra/data")
 	if err3 != nil {
 		panic(err3)
 	}

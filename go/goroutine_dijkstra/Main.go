@@ -10,7 +10,7 @@ import (
 func main() {
 	go_num := runtime.NumCPU() / 2
 	time_start := time.Now()
-	n := 2000
+	n := 1000
 	Jobs := make(chan int, n)
 	Results_dij := make(chan Table_int, n)
 	Results_count := make(chan (int))

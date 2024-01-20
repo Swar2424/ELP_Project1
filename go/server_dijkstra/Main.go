@@ -1,10 +1,21 @@
 package main
 
+/*
+Take a TCP port on the machine and ask connection attempts to that port to be
+redirected to your app
+ln, err := net.Listen("tcp", portString) //”:8000”
+● Accept a new connection on that port
+conn, errconn := ln.Accept()
+● Close the connection of a client
+conn.Close()
+● Receive/Send byte: same as for the client
+*/
+
 import (
 	"fmt"
+	"net"
 	"runtime"
 	"slices"
-	"time"
 )
 
 type Table_int struct {
@@ -12,15 +23,13 @@ type Table_int struct {
 	Origin int
 }
 
-func main() {
+func dijkstra_goroutine(dat_numb [][]int) []int {
+	n := len(dat_numb)
 	go_num := runtime.NumCPU() / 2
-	time_start := time.Now()
-	n := 2000
 	Jobs := make(chan int, n)
 	Results_dij := make(chan Table_int, n)
 	Results_count := make(chan (int))
 	Count_go := make(chan (int))
-	dat_numb := Load_data("./data", n)
 	table := make([]int, n)
 
 	for i := 0; i < go_num; i++ {
@@ -34,7 +43,57 @@ func main() {
 		table[i] += 1
 	}
 
-	time_end := time.Now()
 	fmt.Println(slices.Max(table), slices.Min(table))
-	fmt.Println(time_end.Sub(time_start))
+	return table
+}
+
+func handleClient(conn net.Conn) {
+	defer conn.Close()
+
+	// Read and process data from the client
+	n := 1000
+	matrix, err := receiveMatrix(conn)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	Slice := dijkstra_goroutine(matrix.Data)
+	Donnees := make([][]int, 1)
+	Donnees[0] = Slice
+	// Write data back to the client
+	data := Matrix{
+		Rows:    1,
+		Columns: n,
+		Data:    Donnees,
+	}
+	err = sendMatrix(conn, data)
+	if err != nil {
+		fmt.Println("Erreur lors de l'envoi de la matrice :", err)
+		return
+	}
+}
+
+func main() {
+
+	//Openning TCP server connexion
+
+	listener, err := net.Listen("tcp", "localhost:8000")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer listener.Close()
+
+	fmt.Println("Server is listening on port 8000")
+
+	for {
+		// Accept incoming connections
+		conn, err := listener.Accept()
+		if err != nil {
+			fmt.Println("Error:", err)
+			continue
+		}
+		// Handle client connection in a goroutine
+		go handleClient(conn)
+	}
 }

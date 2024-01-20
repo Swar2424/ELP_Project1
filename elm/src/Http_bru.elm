@@ -86,7 +86,6 @@ update msg model =
                     String.split "," nicknamesStr
             in
             ( { model | nicknames = nicknames }, Cmd.none )
-
         DataReceived (Err httpError) ->
             ( { model
                 | errorMessage = Just (buildErrorMessage httpError)
