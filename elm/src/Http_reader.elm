@@ -9,6 +9,8 @@ module Http_reader exposing (..)
 import Browser
 import Html exposing (Html, text, pre)
 import Http
+import Random
+import List
 
 
 
@@ -31,7 +33,8 @@ main =
 type Model
   = Failure
   | Loading
-  | Success String
+  | FullText String
+  | OneWord { word : String}
 
 
 init : () -> (Model, Cmd Msg)
@@ -50,6 +53,8 @@ init _ =
 
 type Msg
   = GotText (Result Http.Error String)
+  | RandomNumber Int
+
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -58,10 +63,16 @@ update msg model =
     GotText result ->
       case result of
         Ok fullText ->
-          (Success fullText, Cmd.none)
+          (FullText fullText, Random.generate RandomNumber (roll (List.length (String.split " " fullText))))
 
         Err _ ->
           (Failure, Cmd.none)
+        
+    RandomNumber x -> case model of
+          FullText words -> (OneWord{ word = randomWord x (String.split " " words)}, Cmd.none)
+          Failure -> (Failure, Cmd.none)
+          Loading -> (Failure, Cmd.none)
+          OneWord _ -> (Failure, Cmd.none)
 
 
 
@@ -86,5 +97,25 @@ view model =
     Loading ->
       text "Loading..."
 
-    Success fullText ->
+    FullText fullText ->
       pre [] [ text fullText ]
+
+    OneWord word ->
+      pre [] [ text word.word ]
+
+
+randomWord : Int -> List String -> String
+randomWord x list = case pick x list of
+    Nothing -> ""
+    Just word -> word
+
+roll : Int -> Random.Generator Int
+roll n = Random.int 0 n
+
+pick : Int -> List a -> Maybe a
+pick n list = List.head (List.drop n list)
+
+getLast : (List a) -> (Maybe a)
+getLast liste = case List.reverse liste of
+    (x::xs) -> Just x
+    [] -> Nothing
