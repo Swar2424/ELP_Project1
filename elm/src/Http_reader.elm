@@ -11,7 +11,7 @@ import Html exposing (Html, text, pre)
 import Http
 import Random
 import List
-import Json.Decode exposing (Decoder, map2, field, int, string)
+import Json.Decode exposing (Decoder, map2, map3, field, list, string)
 
 
 
@@ -36,21 +36,27 @@ type Model
   | Loading
   | FullText String
   | OneWord String
-  | SuccessDef Def
+  | SuccessDef (List Def)
   | FailureBad
 
 
 type alias Def = { word : String,
-  origin : String
-  } 
+  phonetic : String,
+  meanings : List Meaning
+  }
+
+type alias Meaning =
+    { definitions : List String,
+      partOfSpeech : String
+    }
 
 
 init : () -> (Model, Cmd Msg)
 init _ =
   ( Loading
   , Http.get
-      { url = "https://raw.githubusercontent.com/Swar2424/ELP_Project1/main/elm/thousand_words_things_explainer.txt" -- "https://elm-lang.org/assets/public-opinion.txt"
-      , expect = Http.expectString GotText                      -- "https://perso.liris.cnrs.fr/tristan.roussillon/GuessIt/thousand_words_things_explainer.txt"
+      { url = "https://raw.githubusercontent.com/Swar2424/ELP_Project1/main/elm/thousand_words_things_explainer.txt"
+      , expect = Http.expectString GotText
       }
   )
 
@@ -62,7 +68,7 @@ init _ =
 type Msg
   = GotText (Result Http.Error String)
   | RandomNumber Int
-  | GotDef (Result Http.Error Def)
+  | GotDef (Result Http.Error (List Def))
 
 
 
@@ -80,7 +86,10 @@ update msg model =
     RandomNumber x -> case model of
           FullText words -> case OneWord (randomWord x (String.split " " words)) of
             OneWord word -> (OneWord word, 
-              Cmd.none)
+              Http.get
+                { url = ("https://api.dictionaryapi.dev/api/v2/entries/en/" ++ (word))
+                , expect = Http.expectJson GotDef defDecoder
+                })
             Failure -> (Failure, Cmd.none)
             Loading -> (Failure, Cmd.none)
             FullText _ -> (Failure, Cmd.none)
@@ -131,8 +140,9 @@ view model =
     OneWord word ->
       pre [] [ text ("https://api.dictionaryapi.dev/api/v2/entries/en/" ++ (word)) ]
 
-    SuccessDef def ->
-      pre [] [ text def.origin ]
+    SuccessDef listdef -> case listdef of 
+      (x::xs) -> createDef x
+      _ -> pre [] [ text "bruh"]
 
 
 randomWord : Int -> List String -> String
@@ -146,9 +156,26 @@ roll n = Random.int 0 n
 pick : Int -> List a -> Maybe a
 pick n list = List.head (List.drop n list)
 
-defDecoder : Decoder Def
-defDecoder =
-  map2 Def
-    (field "word" string)
-    (field "origin" string)
 
+
+defDecoder : Decoder (List Def)
+defDecoder =
+  list listDecodage
+
+
+listDecodage : Decoder Def
+listDecodage =
+  map3 Def
+    (field "word" string)
+    (field "phonetic" string)
+    (field "meanings" (list meaningDecodage))
+
+meaningDecodage : Decoder Meaning
+meaningDecodage = 
+  map2 Meaning
+    (field "definitions" (list (field "definition" string)))
+    (field "partOfSpeech" string)
+
+
+createDef : Def -> Html msg
+createDef x = pre [] [ text x.word ]
