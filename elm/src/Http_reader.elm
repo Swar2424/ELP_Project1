@@ -80,10 +80,7 @@ update msg model =
     RandomNumber x -> case model of
           FullText words -> case OneWord (randomWord x (String.split " " words)) of
             OneWord word -> (OneWord word, 
-              Http.get
-                { url = ("https://api.dictionaryapi.dev/api/v2/entries/en/" ++ (word))
-                , expect = Http.expectJson GotDef defDecoder
-                })
+              Cmd.none)
             Failure -> (Failure, Cmd.none)
             Loading -> (Failure, Cmd.none)
             FullText _ -> (Failure, Cmd.none)
