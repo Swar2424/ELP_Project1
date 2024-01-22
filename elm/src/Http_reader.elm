@@ -7,7 +7,7 @@ module Http_reader exposing (..)
 --
 
 import Browser
-import Html exposing (Html, text, pre)
+import Html exposing (Html, text, pre, div, h1)
 import Http
 import Random
 import List
@@ -37,7 +37,7 @@ type Model
   | FullText String
   | OneWord String
   | SuccessDef (List Def)
-  | FailureBad
+  | FailureJSON
 
 
 type alias Def = { word : String,
@@ -94,18 +94,18 @@ update msg model =
             Loading -> (Failure, Cmd.none)
             FullText _ -> (Failure, Cmd.none)
             SuccessDef _ -> (Failure, Cmd.none)
-            FailureBad -> (Failure, Cmd.none)
+            FailureJSON -> (Failure, Cmd.none)
               
 
           Failure -> (Failure, Cmd.none)
           Loading -> (Failure, Cmd.none)
           OneWord _ -> (Failure, Cmd.none)
           SuccessDef _ -> (Failure, Cmd.none)
-          FailureBad -> (Failure, Cmd.none)
+          FailureJSON -> (Failure, Cmd.none)
 
     GotDef result -> case result of
         Ok def -> (SuccessDef def, Cmd.none)
-        Err _ -> (FailureBad, Cmd.none)
+        Err _ -> (FailureJSON, Cmd.none)
           
 
 
@@ -128,7 +128,7 @@ view model =
     Failure ->
       text "There is an error somewhere."
 
-    FailureBad ->
+    FailureJSON ->
       text "No dico"
 
     Loading ->
@@ -140,9 +140,7 @@ view model =
     OneWord word ->
       pre [] [ text ("https://api.dictionaryapi.dev/api/v2/entries/en/" ++ (word)) ]
 
-    SuccessDef listdef -> case listdef of 
-      (x::xs) -> createDef x
-      _ -> pre [] [ text "bruh"]
+    SuccessDef listdef -> pre [] (createDef listdef)
 
 
 randomWord : Int -> List String -> String
@@ -177,5 +175,17 @@ meaningDecodage =
     (field "partOfSpeech" string)
 
 
-createDef : Def -> Html msg
-createDef x = pre [] [ text x.word ]
+createDef : List Def -> List (Html msg)
+createDef list = case list of
+    (x::xs) -> (text x.word ::List.append (showDef x.meanings) (createDef xs))
+    [] -> []
+
+showDef : List Meaning -> List (Html msg)
+showDef meanings = case meanings of
+    (x::xs) ->  ((text ("\n\r\n\r - " ++ x.partOfSpeech ++ " : \r\n" ++ writeListDef x.definitions)) :: showDef xs)
+    [] -> [text ""]
+
+writeListDef : List String -> String
+writeListDef list = case list of
+  (x::xs) -> "     - " ++ x ++ "\r\n" ++ (writeListDef xs)
+  [] -> "\r\n"
