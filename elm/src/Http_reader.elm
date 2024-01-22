@@ -157,7 +157,7 @@ view model =
 
     SuccessDef result -> div []
       [ viewValidation model, viewInput "wordToGuess" "Enter the word to guess" result.wordToGuess WordToGuess
-      , pre [] (createDef result.listdef)]
+      , pre [] (createDef result.listdef 1)]
 
 
 randomWord : Int -> List String -> String
@@ -191,9 +191,9 @@ meaningDecodage =
     (field "partOfSpeech" string)
 
 
-createDef : List Def -> List (Html msg)
-createDef list = case list of
-    (x::xs) -> (text x.word ::List.append (showDef x.meanings) (createDef xs))
+createDef : List Def -> Int -> List (Html msg)
+createDef list n = case list of
+    (x::xs) -> (text ((String.fromInt n)++".") ::List.append (showDef x.meanings) (createDef xs (n+1)))
     [] -> []
 
 
