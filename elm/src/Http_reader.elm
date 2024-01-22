@@ -7,11 +7,13 @@ module Http_reader exposing (..)
 --
 
 import Browser
-import Html exposing (Html, text, pre)
+import Html exposing (Html, text, pre, div, input)
 import Http
 import Random
 import List
-import Json.Decode exposing (Decoder, map2, map3, field, list, string)
+import Json.Decode exposing (Decoder, map2, field, list, string)
+import Html.Attributes exposing (type_, placeholder, value, style)
+import Html.Events exposing (onInput)
 
 
 
@@ -36,12 +38,13 @@ type Model
   | Loading
   | FullText String
   | OneWord String
-  | SuccessDef (List Def)
-  | FailureBad
+  | SuccessDef { wordToFind : String
+  , wordToGuess : String
+  , listdef : (List Def)}
+  | FailureJSON
 
 
 type alias Def = { word : String,
-  phonetic : String,
   meanings : List Meaning
   }
 
@@ -69,6 +72,7 @@ type Msg
   = GotText (Result Http.Error String)
   | RandomNumber Int
   | GotDef (Result Http.Error (List Def))
+  | WordToGuess String
 
 
 
@@ -94,18 +98,29 @@ update msg model =
             Loading -> (Failure, Cmd.none)
             FullText _ -> (Failure, Cmd.none)
             SuccessDef _ -> (Failure, Cmd.none)
-            FailureBad -> (Failure, Cmd.none)
+            FailureJSON -> (Failure, Cmd.none)
               
 
           Failure -> (Failure, Cmd.none)
           Loading -> (Failure, Cmd.none)
           OneWord _ -> (Failure, Cmd.none)
           SuccessDef _ -> (Failure, Cmd.none)
-          FailureBad -> (Failure, Cmd.none)
+          FailureJSON -> (Failure, Cmd.none)
 
     GotDef result -> case result of
-        Ok def -> (SuccessDef def, Cmd.none)
-        Err _ -> (FailureBad, Cmd.none)
+        Ok def -> case def of
+          (x::xs) -> (SuccessDef {wordToGuess = "", wordToFind = x.word, listdef = def}, Cmd.none)
+          [] -> (FailureJSON, Cmd.none)
+        Err _ -> (FailureJSON, Cmd.none)
+    
+    WordToGuess wordToGuess -> case model of
+      Failure -> (Failure, Cmd.none)
+      Loading -> (Failure, Cmd.none)
+      FullText _ -> (Failure, Cmd.none)
+      SuccessDef results -> (SuccessDef {results | wordToGuess = wordToGuess}, Cmd.none)
+      FailureJSON -> (Failure, Cmd.none)
+      OneWord _ -> (Failure, Cmd.none)
+      
           
 
 
@@ -128,7 +143,7 @@ view model =
     Failure ->
       text "There is an error somewhere."
 
-    FailureBad ->
+    FailureJSON ->
       text "No dico"
 
     Loading ->
@@ -140,9 +155,9 @@ view model =
     OneWord word ->
       pre [] [ text ("https://api.dictionaryapi.dev/api/v2/entries/en/" ++ (word)) ]
 
-    SuccessDef listdef -> case listdef of 
-      (x::xs) -> createDef x
-      _ -> pre [] [ text "bruh"]
+    SuccessDef result -> div []
+      [ viewValidation model, viewInput "wordToGuess" "Enter the word to guess" result.wordToGuess WordToGuess
+      , pre [] (createDef result.listdef 1)]
 
 
 randomWord : Int -> List String -> String
@@ -165,9 +180,8 @@ defDecoder =
 
 listDecodage : Decoder Def
 listDecodage =
-  map3 Def
+  map2 Def
     (field "word" string)
-    (field "phonetic" string)
     (field "meanings" (list meaningDecodage))
 
 meaningDecodage : Decoder Meaning
@@ -177,5 +191,38 @@ meaningDecodage =
     (field "partOfSpeech" string)
 
 
-createDef : Def -> Html msg
-createDef x = pre [] [ text x.word ]
+createDef : List Def -> Int -> List (Html msg)
+createDef list n = case list of
+    (x::xs) -> (text ((String.fromInt n)++".") ::List.append (showDef x.meanings) (createDef xs (n+1)))
+    [] -> []
+
+
+showDef : List Meaning -> List (Html msg)
+showDef meanings = case meanings of
+    (x::xs) ->  ((text ("\n\r\n\r - " ++ x.partOfSpeech ++ " : \r\n" ++ writeListDef x.definitions)) :: showDef xs)
+    [] -> [text ""]
+
+
+writeListDef : List String -> String
+writeListDef list = case list of
+  (x::xs) -> "     - " ++ x ++ "\r\n" ++ (writeListDef xs)
+  [] -> "\r\n"
+
+
+viewInput : String -> String -> String -> (String -> msg) -> Html msg
+viewInput t p v toMsg =
+  input [ type_ t, placeholder p, value v, onInput toMsg ] []
+
+
+viewValidation : Model -> Html msg
+viewValidation model = case model of
+  SuccessDef result ->
+    if result.wordToGuess == result.wordToFind then
+      div [ style "color" "green" ] [ text "Niiice, well done !!" ]
+    else
+      div [ style "color" "red" ] [ text "Find the word" ]
+  Failure -> div [ style "color" "green" ] [ text "Bruh" ]
+  Loading -> div [ style "color" "green" ] [ text "Bruh" ]
+  OneWord _ -> div [ style "color" "green" ] [ text "Bruh" ]
+  FailureJSON -> div [ style "color" "green" ] [ text "Bruh" ]
+  FullText _ -> div [ style "color" "green" ] [ text "Bruh" ]
