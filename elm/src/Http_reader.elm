@@ -108,7 +108,9 @@ update msg model =
           FailureJSON -> (Failure, Cmd.none)
 
     GotDef result -> case result of
-        Ok def -> (SuccessDef {wordToGuess = "", wordToFind = "", listdef = def}, Cmd.none)
+        Ok def -> case def of
+          (x::xs) -> (SuccessDef {wordToGuess = "", wordToFind = x.word, listdef = def}, Cmd.none)
+          [] -> (FailureJSON, Cmd.none)
         Err _ -> (FailureJSON, Cmd.none)
     
     WordToGuess wordToGuess -> case model of
@@ -154,9 +156,8 @@ view model =
       pre [] [ text ("https://api.dictionaryapi.dev/api/v2/entries/en/" ++ (word)) ]
 
     SuccessDef result -> div []
-      [ viewInput "wordToGuess" "Enter the word to guess" result.wordToGuess WordToGuess
-      , viewValidation model,
-      pre [] (createDef result.listdef)]
+      [ viewValidation model, viewInput "wordToGuess" "Enter the word to guess" result.wordToGuess WordToGuess
+      , pre [] (createDef result.listdef)]
 
 
 randomWord : Int -> List String -> String
@@ -219,7 +220,7 @@ viewValidation model = case model of
     if result.wordToGuess == result.wordToFind then
       div [ style "color" "green" ] [ text "Niiice, well done !!" ]
     else
-      div [ style "color" "red" ] [ text "Try again !" ]
+      div [ style "color" "red" ] [ text "Find the word" ]
   Failure -> div [ style "color" "green" ] [ text "Bruh" ]
   Loading -> div [ style "color" "green" ] [ text "Bruh" ]
   OneWord _ -> div [ style "color" "green" ] [ text "Bruh" ]
