@@ -45,25 +45,33 @@ function shuffle(array) {
 }
 
 
-function not_lettres(hand, name) {
+function not_lettres(hand, row, name) {
     var rep = true
+    var row_split = row.split("") 
     var temp_hand = [...hand]
+    var row_split_copy = [...row_split]
+    var total_hand = temp_hand.concat(row_split_copy)
     console.log(name)
     for (i = 0 ; i < name.length ; i += 1) {
-        rep = rep && (temp_hand.includes(name[i]))
+        rep = rep && (total_hand.includes(name[i]))
         if (rep){
             var j = 0;
-            var r = temp_hand.length;
-            while  (temp_hand.length == r){
-                if (temp_hand[j] == name[i]){
-                    temp_hand.splice(j,1);
+            var r = total_hand.length;
+            while  (total_hand.length == r){
+                if (total_hand[j] == name[i]){
+                    total_hand.splice(j,1);
+                    if (row_split.include(total_hand[j])){ 
+                        row_split.splice(j-name.length, 1);
+                    } else {
+                        temp_hand.splice(j,1);
+                    }
                 }
                 j += 1;
             }
         }
     };
-    if (rep) {
-        return [rep, temp_hand] 
+    if (rep && row_split.length() == 0) {
+        return [rep, total_hand] 
     } else {
         return [rep, hand] 
     }
