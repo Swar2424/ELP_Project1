@@ -8,6 +8,7 @@ const readline = require('node:readline').createInterface({
     output: process.stdout,
 });
 
+//Mélanger la pioche de mots
 function shuffle(array) {
     let currentIndex = array.length,  randomIndex;
 
@@ -26,9 +27,20 @@ function shuffle(array) {
 
 function not_lettres(letters, name) {
     var rep = true
+    var temp_letters = letters
     console.log(name)
     for (i = 0 ; i < name.length ; i += 1) {
-        rep = rep && (letters.includes(name[i]))
+        rep = rep && (temp_letters.includes(name[i]))
+        if (rep){
+            var j = 0;
+            var r = temp_letters.length;
+            while  (temp_letters.length == r){
+                if (temp_letters[j] == name[i]){
+                    temp_letters.splice(j,1);
+                }
+                j += 1;
+            }
+        }
     };
     return rep
 }
