@@ -1,6 +1,6 @@
 function create() {
-    reponse = "BA";
-    return function (x) { return x + reponse; }
+    reponse = "Letter choose : ";
+    return function (x) { return reponse + x ; }
 }
 
 const readline = require('node:readline').createInterface({
@@ -8,12 +8,29 @@ const readline = require('node:readline').createInterface({
     output: process.stdout,
 });
 
+function shuffle(array) {
+    let currentIndex = array.length,  randomIndex;
+
+    while (currentIndex > 0) {
+
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
+    }
+  
+    return array;
+}
 
 
-const fs = require('node:fs');
-
-
-
+function not_lettres(letters, name) {
+    var rep = True
+    for (i = 0 ; i < name.legnth ; i += 1) {
+        rep = rep && (letters.includes(name[i]))
+    };
+    return rep
+}
 
 
 function enter_letter(letters) {
@@ -33,9 +50,21 @@ function enter_letter(letters) {
         } else {
             enter_letter(letters)
         }});
+}
+
+
+const fs = require('node:fs');
+
+
+const lettres = [["a", 14], ["b", 4], ["c", 7] , ["d",5], ["e",19], ["f",2], ["g",4], ["h",2], ["i",11], ["j",1], ["k",1], ["l",6], ["m",5], ["n",9], ["o",8], ["p",4], ["q", 1], ["r", 10], ["s", 7], ["t", 9], ["u", 8], ["v", 2], ["w", 1], ["x", 1], ["y", 1], ["z", 2]]
+let pioche = []
+for (i=0; i < lettres.length; i += 1 ){
+    let l = lettres[i][0], nb = lettres[i][1];
+    for (j = 0; j < nb; j += 1){
+        pioche.push(l)
     }
+}
 
-
-const lettres = ["a", "b", "c", "d"]
-
-enter_letter(lettres)
+shuffle(pioche)
+var a = pioche.splice(0,6)
+enter_letter(a)
