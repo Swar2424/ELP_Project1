@@ -25,8 +25,9 @@ function shuffle(array) {
 
 
 function not_lettres(letters, name) {
-    var rep = True
-    for (i = 0 ; i < name.legnth ; i += 1) {
+    var rep = true
+    console.log(name)
+    for (i = 0 ; i < name.length ; i += 1) {
         rep = rep && (letters.includes(name[i]))
     };
     return rep
@@ -35,7 +36,7 @@ function not_lettres(letters, name) {
 
 function enter_letter(letters) {
     readline.question(`${letters} :`, name => {
-        if (letters.includes(name)) {
+        if (not_lettres(letters, name)) {
             let a = create()
             let x = a(name)
             console.log(x)
