@@ -1,5 +1,5 @@
-function create() {
-    reponse = "Letter choose : ";
+function create(i) {
+    var reponse = `Letter choose by ${i}: `;
     return function (x) { return reponse + x ; }
 }
 
@@ -34,10 +34,11 @@ function not_lettres(letters, name) {
 }
 
 
-function enter_letter(letters) {
+function enter_letter(lettres, n) {
+    var letters = lettres.splice(0, 6)
     readline.question(`${letters} :`, name => {
         if (not_lettres(letters, name)) {
-            let a = create()
+            let a = create(n)
             let x = a(name)
             console.log(x)
             fs.writeFile('./test.txt', x, err => {
@@ -47,10 +48,12 @@ function enter_letter(letters) {
                 // file written successfully
                 }
             });
-            readline.close();
+            
         } else {
-            enter_letter(letters)
-        }});
+            enter_letter(lettres, n)
+        };
+        enter_letter(lettres, (n+1)%2);
+    })
 }
 
 
@@ -67,5 +70,4 @@ for (i=0; i < lettres.length; i += 1 ){
 }
 
 shuffle(pioche)
-var a = pioche.splice(0,6)
-enter_letter(a)
+enter_letter(pioche, 0)
