@@ -48,13 +48,6 @@ function shuffle(array) {
 function not_lettres(hand, tableau, row, name) {
     var rep = true
     var total_hand = [...hand]
-    console.log(tableau[row])
-    if (tableau[row].length != 0){
-        var row_split = tableau[row][0].split("")
-        var row_split_copy = [...row_split]
-        var total_hand = total_hand.concat(row_split_copy)
-    }
-
     console.log(name)
     for (i = 0 ; i < name.length ; i += 1) {
         rep = rep && (total_hand.includes(name[i]))
@@ -64,8 +57,8 @@ function not_lettres(hand, tableau, row, name) {
             while  (total_hand.length == r){
                 if (total_hand[j] == name[i]){
                     total_hand.splice(j,1);
-                    if (tableau[row].length != 0 && row_split.includes(total_hand[j])){ 
-                        row_split.splice(j-name.length, 1);
+                    if (tableau[row].length != 0 && tableau[row].includes(total_hand[j])){ 
+                        tableau[row].splice(j-(name.length), 1);
                     }
                 }
                 j += 1;
@@ -88,6 +81,12 @@ function enter_letter(letters, hands, tableaux, n) {
         row = parseInt(row) - 1
         console.log(row)
         if ((row >= 0) && (row < tableaux[n].length) ) {
+            if (tableaux[n][row].length != 0){
+                var row_split_copy = [...tableaux[n][row]]
+                console.log(row_split_copy)
+                hands[n] = hands[n].concat(row_split_copy)
+                console.log(hands[n])
+            }
             readline.question(`${hands[n]} :`, name => {
 
                 //Si le joueur joue
