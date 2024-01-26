@@ -45,9 +45,10 @@ function shuffle(array) {
 }
 
 
-function not_lettres(hand, tableau, row, name) {
+function not_lettres(hand, tableau, name, len) {
     var rep = true
     var total_hand = [...hand]
+    tab_copy = [...tableau]
     console.log(name)
     for (i = 0 ; i < name.length ; i += 1) {
         rep = rep && (total_hand.includes(name[i]))
@@ -57,15 +58,16 @@ function not_lettres(hand, tableau, row, name) {
             while  (total_hand.length == r){
                 if (total_hand[j] == name[i]){
                     total_hand.splice(j,1);
-                    if (tableau[row].length != 0 && tableau[row].includes(total_hand[j])){ 
-                        tableau[row].splice(j-(name.length), 1);
+                    if (tableau.length != 0 && tab_copy.includes(total_hand[j])){ 
+                        console.log(j-len)
+                        tab_copy.splice(j-(len), 1);
                     }
                 }
                 j += 1;
             }
         }
     };
-    if (rep && tableau[row].length != 0 && row_split == 0) {
+    if (rep && tableau.length != 0 &&  tab_copy == 0) {
         return [rep, total_hand] 
     } else if (rep){
         return [rep, total_hand] 
@@ -80,6 +82,7 @@ function enter_letter(letters, hands, tableaux, n) {
     readline.question(`${tableau_to_str(tableaux[n])}\n${tableau_to_str(tableaux[(n+1)%2])}\nChoose row :`, row => {
         row = parseInt(row) - 1
         console.log(row)
+        let len = hands[n].length
         if ((row >= 0) && (row < tableaux[n].length) ) {
             if (tableaux[n][row].length != 0){
                 var row_split_copy = [...tableaux[n][row]]
@@ -91,7 +94,7 @@ function enter_letter(letters, hands, tableaux, n) {
 
                 //Si le joueur joue
                 if (name != "!"){
-                    rep = not_lettres(hands[n], tableaux[n], row, name)
+                    rep = not_lettres(hands[n], tableaux[n][row], name, len)
                     hands[n] = rep[1]
 
                     //Si il peut jouer ce mot
