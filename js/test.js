@@ -8,6 +8,26 @@ const readline = require('node:readline').createInterface({
     output: process.stdout,
 });
 
+function writing(tableau) {
+    var writeable = ""
+    for (j=0 ; (j<tableau.length) ; j+=1) {
+        writeable += tableau[j] + "\n"
+    }
+    writeable += "- - - - - - - - - - - - - - - -\n"
+    return writeable
+}
+
+function write_in(tableau, name) {
+    var looping = true
+    for (i=0 ; (i<tableau.length && looping) ; i+=1) {
+        if (tableau[i].length == 0) {
+            tableau[i] = name
+            looping = false
+        }
+    }
+}
+
+
 //Mélanger la pioche de mots
 function shuffle(array) {
     let currentIndex = array.length,  randomIndex;
@@ -50,41 +70,46 @@ function not_lettres(hand, name) {
 }
 
 
-function enter_letter(letters, hands, n) {
+function enter_letter(letters, hands, tableaux, n) {
     //prise de l'input
-    readline.question(`${hands[n]} :`, name => {
+    readline.question(`${writing(tableaux[n])}\n${writing(tableaux[(n+1)%2])}\nChoose row :`, row => {
+        readline.question(`${hands[n]} :`, name => {
 
-        //Si le joueur joue
-        if (name != "!"){
-            rep = not_lettres(hands[n], name)
-            hands[n] = rep[1]
+            //Si le joueur joue
+            if (name != "!"){
+                rep = not_lettres(hands[n], name)
+                hands[n] = rep[1]
 
-            //Si il peut jouer ce mot
-            if (rep[0]) {
-                let a = create(n)
-                let x = a(name)
-                console.log(x)
-                hands[n].push(letters.splice(0, 1)[0])
-                fs.writeFile('./test.txt', x, err => {
-                    if (err) {
-                    console.error(err);
-                    } else {
-                    // file written successfully
-                    }
-                });
-                
-            //Si il ne peut pas jouer ce mot
+                //Si il peut jouer ce mot
+                if (rep[0]) {
+                    write_in(tableaux[n], name)
+                    let a = create(n)
+                    let x = a(name)
+                    console.log(x)
+                    hands[n].push(letters.splice(0, 1)[0])
+                    var writeable = writing(tableaux[n]) + writing(tableaux[(n+1)%2])
+                    fs.writeFile('./test.txt', writeable, err => {
+                        if (err) {
+                        console.error(err);
+                        } else {
+                        // file written successfully
+                        }
+                    });
+                    
+                //Si il ne peut pas jouer ce mot
+                } else {
+                    console.log("Invalide")
+                };
+
+                enter_letter(letters, hands, tableaux, n)
+
+            //Si il passe son tour
             } else {
-                console.log("Invalide")
-            };
-
-            enter_letter(letters, hands, n)
-
-        //Si il passe son tour
-        } else {
-        hands[n].push(letters.splice(0, 1)[0])
-        enter_letter(letters, hands, (n+1)%2);
-        }
+            hands[n].push(letters.splice(0, 1)[0])
+            console.log(`Player ${(n+1)%2+1} is playing`)
+            enter_letter(letters, hands, tableaux, (n+1)%2);
+            }
+        })
     })
 }
 
@@ -106,7 +131,9 @@ shuffle(pioche)
 
 
 hands = [[],[]]
+tableaux = [[[],[],[],[],[],[],[],[]],[[],[],[],[],[],[],[],[]]]
 hands[0] = pioche.splice(0, 6)
 hands[1] = pioche.splice(0, 6)
 
-enter_letter(pioche, hands, 0)
+console.log(`Player 1 is playing`)
+enter_letter(pioche, hands, tableaux, 0)
