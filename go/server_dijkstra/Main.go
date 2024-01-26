@@ -1,16 +1,5 @@
 package main
 
-/*
-Take a TCP port on the machine and ask connection attempts to that port to be
-redirected to your app
-ln, err := net.Listen("tcp", portString) //”:8000”
-● Accept a new connection on that port
-conn, errconn := ln.Accept()
-● Close the connection of a client
-conn.Close()
-● Receive/Send byte: same as for the client
-*/
-
 import (
 	"fmt"
 	"net"
