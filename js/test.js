@@ -47,10 +47,13 @@ function shuffle(array) {
 
 function not_lettres(hand, row, name) {
     var rep = true
-    var row_split = row.split("") 
-    var temp_hand = [...hand]
-    var row_split_copy = [...row_split]
-    var total_hand = temp_hand.concat(row_split_copy)
+    var total_hand = [...hand]
+    if (row != null){
+        var row_split = row[0].split("")
+        var row_split_copy = [...row_split]
+        var total_hand = total_hand.concat(row_split_copy)
+    }
+
     console.log(name)
     for (i = 0 ; i < name.length ; i += 1) {
         rep = rep && (total_hand.includes(name[i]))
@@ -62,8 +65,6 @@ function not_lettres(hand, row, name) {
                     total_hand.splice(j,1);
                     if (row_split.include(total_hand[j])){ 
                         row_split.splice(j-name.length, 1);
-                    } else {
-                        temp_hand.splice(j,1);
                     }
                 }
                 j += 1;
@@ -88,7 +89,7 @@ function enter_letter(letters, hands, tableaux, n) {
 
                 //Si le joueur joue
                 if (name != "!"){
-                    rep = not_lettres(hands[n], name)
+                    rep = not_lettres(hands[n], row, name)
                     hands[n] = rep[1]
 
                     //Si il peut jouer ce mot

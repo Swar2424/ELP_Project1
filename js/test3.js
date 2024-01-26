@@ -4,6 +4,5 @@ liste3 = ["a", "b", "c"]
 liste4 = ["e", "f", "g"]
 s = "style"
 s_split = s.split("")
-liste_temp = liste3.concat(liste4)
-
-console.log(s_split)
+liste3 = liste3.concat(liste4)
+console.log(liste3)
