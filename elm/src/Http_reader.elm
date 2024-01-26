@@ -7,7 +7,7 @@ module Http_reader exposing (..)
 --
 
 import Browser
-import Html exposing (Html, text, pre, div, input)
+import Html exposing (Html, text, pre, div, input, form, h1)
 import Http
 import Random
 import List
@@ -156,8 +156,10 @@ view model =
       pre [] [ text ("https://api.dictionaryapi.dev/api/v2/entries/en/" ++ (word)) ]
 
     SuccessDef result -> div []
-      [ viewValidation model, viewInput "wordToGuess" "Enter the word to guess" result.wordToGuess WordToGuess
-      , pre [] (createDef result.listdef 1)]
+      [ h1 [] [text "Guess the word"], 
+      Html.form [] 
+      [viewValidation model, viewInput "wordToGuess" "Enter the word to guess" result.wordToGuess WordToGuess
+      , pre [] (createDef result.listdef 1)]]
 
 
 randomWord : Int -> List String -> String
