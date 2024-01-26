@@ -8,8 +8,8 @@ const readline = require('node:readline').createInterface({
     output: process.stdout,
 });
 
-function writing(tableau) {
-    var writeable = ""
+function tableau_to_str(tableau) {
+    var writeable = "- - - - - - - - - - - - - - - -\n"
     for (j=0 ; (j<tableau.length) ; j+=1) {
         writeable += tableau[j] + "\n"
     }
@@ -80,44 +80,51 @@ function not_lettres(hand, row, name) {
 
 function enter_letter(letters, hands, tableaux, n) {
     //prise de l'input
-    readline.question(`${writing(tableaux[n])}\n${writing(tableaux[(n+1)%2])}\nChoose row :`, row => {
-        readline.question(`${hands[n]} :`, name => {
+    readline.question(`${tableau_to_str(tableaux[n])}\n${tableau_to_str(tableaux[(n+1)%2])}\nChoose row :`, row => {
+        row = parseInt(row) - 1
+        console.log(row)
+        if ((row >= 0) && (row < tableaux[n].length) ) {
+            readline.question(`${hands[n]} :`, name => {
 
-            //Si le joueur joue
-            if (name != "!"){
-                rep = not_lettres(hands[n], name)
-                hands[n] = rep[1]
+                //Si le joueur joue
+                if (name != "!"){
+                    rep = not_lettres(hands[n], name)
+                    hands[n] = rep[1]
 
-                //Si il peut jouer ce mot
-                if (rep[0]) {
-                    write_in(tableaux[n], name)
-                    let a = create(n)
-                    let x = a(name)
-                    console.log(x)
-                    hands[n].push(letters.splice(0, 1)[0])
-                    var writeable = writing(tableaux[n]) + writing(tableaux[(n+1)%2])
-                    fs.writeFile('./test.txt', writeable, err => {
-                        if (err) {
-                        console.error(err);
-                        } else {
-                        // file written successfully
-                        }
-                    });
-                    
-                //Si il ne peut pas jouer ce mot
+                    //Si il peut jouer ce mot
+                    if (rep[0]) {
+                        tableaux[n][row] = name
+                        let a = create(n)
+                        let x = a(name)
+                        console.log(x)
+                        hands[n].push(letters.splice(0, 1)[0])
+                        var writeable = tableau_to_str(tableaux[n]) + tableau_to_str(tableaux[(n+1)%2])
+                        fs.writeFile('./test.txt', writeable, err => {
+                            if (err) {
+                            console.error(err);
+                            } else {
+                            // file written successfully
+                            }
+                        });
+                        
+                    //Si il ne peut pas jouer ce mot
+                    } else {
+                        console.log("Invalide")
+                    };
+
+                    enter_letter(letters, hands, tableaux, n)
+
+                //Si il passe son tour
                 } else {
-                    console.log("Invalide")
-                };
-
-                enter_letter(letters, hands, tableaux, n)
-
-            //Si il passe son tour
-            } else {
-            hands[n].push(letters.splice(0, 1)[0])
-            console.log(`Player ${(n+1)%2+1} is playing`)
-            enter_letter(letters, hands, tableaux, (n+1)%2);
-            }
-        })
+                hands[n].push(letters.splice(0, 1)[0])
+                console.log(`Player ${(n+1)%2+1} is playing`)
+                enter_letter(letters, hands, tableaux, (n+1)%2);
+                }
+            })
+        } else {
+            console.log("Invalide !")
+            enter_letter(letters, hands, tableaux, n)
+        }
     })
 }
 
