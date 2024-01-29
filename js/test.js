@@ -48,8 +48,10 @@ function shuffle(array) {
 function not_lettres(hand, tableau, name, len) {
     var rep = true
     var total_hand = [...hand]
+    console.log(total_hand)
     tab_copy = [...tableau]
     console.log(name)
+    console.log(tab_copy)
     for (i = 0 ; i < name.length ; i += 1) {
         rep = rep && (total_hand.includes(name[i]))
         if (rep){
@@ -57,19 +59,21 @@ function not_lettres(hand, tableau, name, len) {
             var r = total_hand.length;
             while  (total_hand.length == r){
                 if (total_hand[j] == name[i]){
-                    total_hand.splice(j,1);
-                    if (tableau.length != 0 && tab_copy.includes(total_hand[j])){ 
+                    if (tab_copy.includes(total_hand[j]) && j-len >=0){ 
                         console.log(j-len)
-                        tab_copy.splice(j-(len), 1);
+                        tab_copy.splice(j-len, 1);
                     }
+                    total_hand.splice(j,1);
                 }
                 j += 1;
             }
         }
     };
-    if (rep && tableau.length != 0 &&  tab_copy == 0) {
-        return [rep, total_hand] 
-    } else if (rep){
+    console.log(tab_copy)
+    if (tab_copy.length != 0){
+        rep = false;
+    }
+    if (rep) {
         return [rep, total_hand] 
     } else {
         return [rep, hand] 
@@ -86,7 +90,6 @@ function enter_letter(letters, hands, tableaux, n) {
         if ((row >= 0) && (row < tableaux[n].length) ) {
             if (tableaux[n][row].length != 0){
                 var row_split_copy = [...tableaux[n][row]]
-                console.log(row_split_copy)
                 hands[n] = hands[n].concat(row_split_copy)
                 console.log(hands[n])
             }
