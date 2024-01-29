@@ -14,7 +14,6 @@ import Html exposing (..)
 import Http
 import Random
 import List
-import Json.Decode exposing (Decoder, map2, field, list, string)
 import Html.Attributes exposing (type_, placeholder, value, style)
 import Html.Events exposing (onInput, onClick)
 
