@@ -171,10 +171,11 @@ view model =
       pre [] [ text ("https://api.dictionaryapi.dev/api/v2/entries/en/" ++ (word)) ]
 
     SuccessDef result -> div []
-      [ h1 [style "text-align" "center"] [text ("Guess the word 🤓" ++ (if result.reveal_word then ("\n It's " ++ result.wordToFind ++ " !\n") else "")) ]
+      [ h1 [style "text-align" "center"] [text ("Guess the word    (～￣▽￣)～")]
+      , h2 [style "text-align" "center", style "color" "green"] [text (if result.reveal_word then ("\n It's " ++ result.wordToFind ++ " !\n") else "")]
       , pre [] (createDef result.listdef 1)
-      ,h2 [style "text-align" "center"] [viewValidation model, viewInput "wordToGuess" "Enter the word to guess" result.wordToGuess WordToGuess]
-      ,button [ onClick Checkbox ] [ text "Reveal word ?" ]
+      , div [style "text-align" "center"] [ h1 [] [viewValidation model, viewInput "wordToGuess" "Enter the word to guess" result.wordToGuess WordToGuess],
+          button [ onClick Checkbox ] [ text "Reveal word ?" ], pre [] [text "\n\r\n\r"]]
       ]
 
 
