@@ -79,7 +79,7 @@ function not_lettres(hand, tableau, name, len) {
 
 function enter_letter(letters, hands, tableaux, n) {
     //prise de l'input
-    readline.question(`${tableau_to_str(tableaux[n])}\n${tableau_to_str(tableaux[(n+1)%2])}\nChoose row :`, row => {
+    readline.question(`${tableau_to_str(tableaux[n])}\n${tableau_to_str(tableaux[(n+1)%2])}\n Choose row :`, row => {
         row = parseInt(row) - 1
         console.log(row)
         let len = hands[n].length
