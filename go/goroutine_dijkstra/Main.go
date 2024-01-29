@@ -30,6 +30,8 @@ func main() {
 	}
 
 	time_end := time.Now()
+
+	fmt.Println(table)
 	fmt.Println(slices.Max(table), slices.Min(table))
 	fmt.Println(time_end.Sub(time_start))
 }
