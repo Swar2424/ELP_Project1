@@ -63,7 +63,7 @@ function not_lettres(hand, tableau, name, len) {
 }
 
 
-function enter_letter(letters, hands, tableaux, n) {
+function enter_letter(letters, hands, tableaux, n, jarnac) {
     //prise de l'input
     console.log(`${hands[n]}`)
     readline.question(`${tableau_to_str(tableaux[n])}\n${tableau_to_str(tableaux[(n+1)%2])}\nChoose row : `, row => {
@@ -96,28 +96,31 @@ function enter_letter(letters, hands, tableaux, n) {
                                 // file written successfully
                                 }
                             });
+                            if (jarnac) {
+                                console.log("zebi jarnac")
+                            }
                             
                         //Si il ne peut pas jouer ce mot
                         } else {
                             console.log("\nInvalide !\n")
                             hands[n].splice(len, hands[n].length -len);
-                        };
-
-                        enter_letter(letters, hands, tableaux, n)
+                            enter_letter(letters, hands, tableaux, n, false)
+                        };                        
 
                     //Si il passe son tour
                     } else {
-                    hands[n].push(letters.splice(0, 1)[0])
-                    console.log(`\n----------------------------------------------------------------\nPlayer ${(n+1)%2+1} is playing\n`)
-                    enter_letter(letters, hands, tableaux, (n+1)%2);
-                    }
-
-                })
+                        console.log(`\n----------------------------------------------------------------\nPlayer ${(n+1)%2+1} is playing\n`)
+                        readline.question(`${hands[n]}\n${tableau_to_str(tableaux[n])}\nCall Jarnac ? (Y/N) : `), jarnac_ask => {
+                            hands[(n+1)%2].push(letters.splice(0, 1)[0])
+                            enter_letter(letters, hands, tableaux, n, (jarnac_ask == "Y"))
+                        };
+                    };
+                });
         } else {
             console.log("\n Invalide !\n")
-            enter_letter(letters, hands, tableaux, n)
-        }
-    })
+            enter_letter(letters, hands, tableaux, n, jarnac)
+        };
+    });
 }
 
 
