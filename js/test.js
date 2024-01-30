@@ -91,8 +91,7 @@ function enter_letter(letters, hands, tableaux, n) {
         row = parseInt(row) - 1
         console.log(row)
         let len = hands[n].length
-        if ((row >= 0) && (row < tableaux[n].length)) {
-            if (row >= 1 && tableaux[n][row-1].length != 0 || row == 0){
+        if ((row >= 1 && tableaux[n][row-1].length != 0 || row == 0) && (row < tableaux[n].length)) {
                 if (tableaux[n][row].length != 0){
                     var row_split_copy = [...tableaux[n][row]]
                     hands[n] = hands[n].concat(row_split_copy)
@@ -137,10 +136,6 @@ function enter_letter(letters, hands, tableaux, n) {
                     }
 
                 })
-            } else {
-                console.log("Invalide !")
-                enter_letter(letters, hands, tableaux, n)
-            }
         } else {
             console.log("Invalide !")
             enter_letter(letters, hands, tableaux, n)
