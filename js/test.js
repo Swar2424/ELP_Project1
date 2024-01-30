@@ -1,8 +1,3 @@
-function create(i) {
-    var reponse = `Letter chosen by ${i}: `;
-    return function (x) { return reponse + x ; }
-}
-
 const readline = require('node:readline').createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -16,17 +11,6 @@ function tableau_to_str(tableau) {
     writeable += "- - - - - - - - - - - - - - - -\n"
     return writeable
 }
-
-function write_in(tableau, name) {
-    var looping = true
-    for (i=0 ; (i<tableau.length && looping) ; i+=1) {
-        if (tableau[i].length == 0) {
-            tableau[i] = name
-            looping = false
-        }
-    }
-}
-
 
 //Mélanger la pioche de mots
 function shuffle(array) {
@@ -45,32 +29,27 @@ function shuffle(array) {
 }
 
 
-function not_lettres(hand, tableau, name) {
+function not_lettres(hand, tableau, name, len) {
     var rep = true
     var total_hand = [...hand]
     tab_copy = [...tableau]
     console.log(name)
+
+    //Pour chaque lettre dans le mot à jouer (name)
     for (i = 0 ; i < name.length ; i += 1) {
         rep = rep && (total_hand.includes(name[i]))
-        if (rep){
-            var j = 0;
-            var r = total_hand.length;
-            while  (total_hand.length == r){
-                if (total_hand[j] == name[i]){
-                    if (tab_copy.includes(total_hand[j])){ 
-                        var k = 0
-                        var l = tab_copy.length
-                        while (tab_copy.length == l){
-                            if (tab_copy[k]==total_hand[j]){
-                                tab_copy.splice(k,1);
-                            }
-                            k += 1;
-                        }
-                    }
-                    total_hand.splice(j,1);
-                }
-                j += 1;
+
+        //Si la lettre est disponible
+        if (rep){ 
+            var j = total_hand.indexOf(name[i]);
+            if (tab_copy.includes(name[i])) {
+                var k = tab_copy.indexOf(name[i])
+                tab_copy.splice(k,1)
+                j = len + k
+            } else {
+                len = len - 1
             }
+            total_hand.splice(j,1);
         }
     };
     if (tab_copy.length != 0){
@@ -87,29 +66,27 @@ function not_lettres(hand, tableau, name) {
 function enter_letter(letters, hands, tableaux, n) {
     //prise de l'input
     console.log(`${hands[n]}`)
-    readline.question(`${tableau_to_str(tableaux[n])}\n${tableau_to_str(tableaux[(n+1)%2])}\n Choose row :`, row => {
+    readline.question(`${tableau_to_str(tableaux[n])}\n${tableau_to_str(tableaux[(n+1)%2])}\nChoose row : `, row => {
         row = parseInt(row) - 1
-        console.log(row)
         let len = hands[n].length
         if ((row >= 1 && tableaux[n][row-1].length != 0 || row == 0) && (row < tableaux[n].length)) {
+                var row_split_copy = []
                 if (tableaux[n][row].length != 0){
-                    var row_split_copy = [...tableaux[n][row]]
-                    hands[n] = hands[n].concat(row_split_copy)
+                    row_split_copy = [...tableaux[n][row]]
                 }
                 //Il faudrait lui demander le numéro du joueur à partir du joueur 2
-                readline.question(`${hands[n]} :`, name => {
+                readline.question(`${hands[n]} | ${row_split_copy} : `, name => {
+                    hands[n] = hands[n].concat(row_split_copy)
 
                     //Si le joueur joue
                     if (name != "!"){
-                        rep = not_lettres(hands[n], tableaux[n][row], name)
+                        rep = not_lettres(hands[n], tableaux[n][row], name, len)
                         hands[n] = rep[1]
 
                         //Si il peut jouer ce mot
                         if (rep[0]) {
                             tableaux[n][row] = name
-                            let a = create(n)
-                            let x = a(name)
-                            console.log(x)
+                            console.log(`Word played by ${i+1} : ${name}`)
                             hands[n].push(letters.splice(0, 1)[0])
                             var writeable = tableau_to_str(tableaux[n]) + tableau_to_str(tableaux[(n+1)%2])
                             fs.writeFile('./test.txt', writeable, err => {
@@ -122,7 +99,7 @@ function enter_letter(letters, hands, tableaux, n) {
                             
                         //Si il ne peut pas jouer ce mot
                         } else {
-                            console.log("Invalide")
+                            console.log("\nInvalide !\n")
                             hands[n].splice(len, hands[n].length -len);
                         };
 
@@ -131,13 +108,13 @@ function enter_letter(letters, hands, tableaux, n) {
                     //Si il passe son tour
                     } else {
                     hands[n].push(letters.splice(0, 1)[0])
-                    console.log(`Player ${(n+1)%2+1} is playing`)
+                    console.log(`\n----------------------------------------------------------------\nPlayer ${(n+1)%2+1} is playing\n`)
                     enter_letter(letters, hands, tableaux, (n+1)%2);
                     }
 
                 })
         } else {
-            console.log("Invalide !")
+            console.log("\n Invalide !\n")
             enter_letter(letters, hands, tableaux, n)
         }
     })
@@ -165,5 +142,5 @@ tableaux = [[[],[],[],[],[],[],[],[]],[[],[],[],[],[],[],[],[]]]
 hands[0] = pioche.splice(0, 6)
 hands[1] = pioche.splice(0, 6)
 
-console.log(`Player 1 is playing`)
+console.log(`\n----------------------------------------------------------------\nPlayer 1 is playing\n`)
 enter_letter(pioche, hands, tableaux, 0)
