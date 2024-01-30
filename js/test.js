@@ -66,22 +66,21 @@ function not_lettres(hand, tableau, name, len) {
 function enter_letter(letters, hands, tableaux, n, jarnac) {
     //prise de l'input
     console.log(`${hands[n]}`)
-    readline.question(`${tableau_to_str(tableaux[n])}\n${tableau_to_str(tableaux[(n+1)%2])}\nChoose row : `, row => {
-        row = parseInt(row) - 1
-        let len = hands[n].length
-        if ((row >= 1 && tableaux[n][row-1].length != 0 || row == 0) && (row < tableaux[n].length)) {
-                var row_split_copy = []
-                if (tableaux[n][row].length != 0){
-                    row_split_copy = [...tableaux[n][row]]
-                }
-                //Il faudrait lui demander le numéro du joueur à partir du joueur 2
-                readline.question(`${hands[n]} | ${row_split_copy} : `, name => {
-                    hands[n] = hands[n].concat(row_split_copy)
-
-                    //Si le joueur joue
-                    if (name != "!"){
-                        rep = not_lettres(hands[n], tableaux[n][row], name, len)
-                        hands[n] = rep[1]
+    readline.question(`${tableau_to_str(tableaux[n])}\n Jouer ou Passer : `, choix => {
+        if (choix=="jouer"){
+            readline.question(`${tableau_to_str(tableaux[n])}\nChoose row : `, row => {
+                row = parseInt(row) - 1
+                let len = hands[n].length
+                if ((row >= 1 && tableaux[n][row-1].length != 0 || row == 0) && (row < tableaux[n].length)) {
+                        var row_split_copy = []
+                        if (tableaux[n][row].length != 0){
+                            row_split_copy = [...tableaux[n][row]]
+                        }
+                        //Il faudrait lui demander le numéro du joueur à partir du joueur 2
+                        readline.question(`${hands[n]} | ${row_split_copy} : `, name => {
+                            hands[n] = hands[n].concat(row_split_copy)
+                            rep = not_lettres(hands[n], tableaux[n][row], name, len)
+                            hands[n] = rep[1]
 
                         //Si il peut jouer ce mot
                         if (rep[0]) {
@@ -99,29 +98,36 @@ function enter_letter(letters, hands, tableaux, n, jarnac) {
                             if (jarnac) {
                                 console.log("zebi jarnac")
                             }
+                            enter_letter(letters, hands, tableaux, n, false)
                             
                         //Si il ne peut pas jouer ce mot
                         } else {
                             console.log("\nInvalide !\n")
                             hands[n].splice(len, hands[n].length -len);
                             enter_letter(letters, hands, tableaux, n, false)
-                        };                        
+                        };  
+                    });
+                } else {
+                    console.log("\nInvalide !\n")
 
-                    //Si il passe son tour
-                    } else {
-                        console.log(`\n----------------------------------------------------------------\nPlayer ${(n+1)%2+1} is playing\n`)
-                        readline.question(`${hands[n]}\n${tableau_to_str(tableaux[n])}\nCall Jarnac ? (Y/N) : `), jarnac_ask => {
-                            hands[(n+1)%2].push(letters.splice(0, 1)[0])
-                            enter_letter(letters, hands, tableaux, n, (jarnac_ask == "Y"))
-                        };
-                    };
+                    enter_letter(letters, hands, tableaux, n, false)
+                } 
+            });                     
+
+            //Si il passe son tour       
+            } else if (choix =="passer"){
+                console.log(`\n----------------------------------------------------------------\nPlayer ${(n+1)%2+1} is playing\n`)
+                readline.question(`${hands[n]}\n${tableau_to_str(tableaux[n])}\nCall Jarnac ? (Y/N) : `, jarnac_ask => {
+                    hands[(n+1)%2].push(letters.splice(0, 1)[0])
+                    enter_letter(letters, hands, tableaux, n, (jarnac_ask == "Y"))
                 });
-        } else {
-            console.log("\n Invalide !\n")
-            enter_letter(letters, hands, tableaux, n, jarnac)
-        };
+            } else {
+                console.log("\nInvalide !\n")
+                enter_letter(letters, hands, tableaux, n, false)
+            };
     });
 }
+
 
 
 const fs = require('node:fs');
