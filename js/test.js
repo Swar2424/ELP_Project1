@@ -45,13 +45,11 @@ function shuffle(array) {
 }
 
 
-function not_lettres(hand, tableau, name, len) {
+function not_lettres(hand, tableau, name) {
     var rep = true
     var total_hand = [...hand]
-    console.log(total_hand)
     tab_copy = [...tableau]
     console.log(name)
-    console.log(tab_copy)
     for (i = 0 ; i < name.length ; i += 1) {
         rep = rep && (total_hand.includes(name[i]))
         if (rep){
@@ -75,7 +73,6 @@ function not_lettres(hand, tableau, name, len) {
             }
         }
     };
-    console.log(tab_copy)
     if (tab_copy.length != 0){
         rep = false;
     }
@@ -89,53 +86,61 @@ function not_lettres(hand, tableau, name, len) {
 
 function enter_letter(letters, hands, tableaux, n) {
     //prise de l'input
+    console.log(`${hands[n]}`)
     readline.question(`${tableau_to_str(tableaux[n])}\n${tableau_to_str(tableaux[(n+1)%2])}\n Choose row :`, row => {
         row = parseInt(row) - 1
         console.log(row)
         let len = hands[n].length
-        if ((row >= 0) && (row < tableaux[n].length) ) {
-            if (tableaux[n][row].length != 0){
-                var row_split_copy = [...tableaux[n][row]]
-                hands[n] = hands[n].concat(row_split_copy)
-            }
-            readline.question(`${hands[n]} :`, name => {
-
-                //Si le joueur joue
-                if (name != "!"){
-                    rep = not_lettres(hands[n], tableaux[n][row], name, len)
-                    hands[n] = rep[1]
-
-                    //Si il peut jouer ce mot
-                    if (rep[0]) {
-                        tableaux[n][row] = name
-                        let a = create(n)
-                        let x = a(name)
-                        console.log(x)
-                        hands[n].push(letters.splice(0, 1)[0])
-                        var writeable = tableau_to_str(tableaux[n]) + tableau_to_str(tableaux[(n+1)%2])
-                        fs.writeFile('./test.txt', writeable, err => {
-                            if (err) {
-                            console.error(err);
-                            } else {
-                            // file written successfully
-                            }
-                        });
-                        
-                    //Si il ne peut pas jouer ce mot
-                    } else {
-                        console.log("Invalide")
-                        hands[n].splice(len, hands[n].length -len);
-                    };
-
-                    enter_letter(letters, hands, tableaux, n)
-
-                //Si il passe son tour
-                } else {
-                hands[n].push(letters.splice(0, 1)[0])
-                console.log(`Player ${(n+1)%2+1} is playing`)
-                enter_letter(letters, hands, tableaux, (n+1)%2);
+        if ((row >= 0) && (row < tableaux[n].length)) {
+            if (row >= 1 && tableaux[n][row-1].length != 0 || row == 0){
+                if (tableaux[n][row].length != 0){
+                    var row_split_copy = [...tableaux[n][row]]
+                    hands[n] = hands[n].concat(row_split_copy)
                 }
-            })
+                //Il faudrait lui demander le numéro du joueur à partir du joueur 2
+                readline.question(`${hands[n]} :`, name => {
+
+                    //Si le joueur joue
+                    if (name != "!"){
+                        rep = not_lettres(hands[n], tableaux[n][row], name)
+                        hands[n] = rep[1]
+
+                        //Si il peut jouer ce mot
+                        if (rep[0]) {
+                            tableaux[n][row] = name
+                            let a = create(n)
+                            let x = a(name)
+                            console.log(x)
+                            hands[n].push(letters.splice(0, 1)[0])
+                            var writeable = tableau_to_str(tableaux[n]) + tableau_to_str(tableaux[(n+1)%2])
+                            fs.writeFile('./test.txt', writeable, err => {
+                                if (err) {
+                                console.error(err);
+                                } else {
+                                // file written successfully
+                                }
+                            });
+                            
+                        //Si il ne peut pas jouer ce mot
+                        } else {
+                            console.log("Invalide")
+                            hands[n].splice(len, hands[n].length -len);
+                        };
+
+                        enter_letter(letters, hands, tableaux, n)
+
+                    //Si il passe son tour
+                    } else {
+                    hands[n].push(letters.splice(0, 1)[0])
+                    console.log(`Player ${(n+1)%2+1} is playing`)
+                    enter_letter(letters, hands, tableaux, (n+1)%2);
+                    }
+
+                })
+            } else {
+                console.log("Invalide !")
+                enter_letter(letters, hands, tableaux, n)
+            }
         } else {
             console.log("Invalide !")
             enter_letter(letters, hands, tableaux, n)
