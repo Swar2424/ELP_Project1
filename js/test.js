@@ -59,9 +59,15 @@ function not_lettres(hand, tableau, name, len) {
             var r = total_hand.length;
             while  (total_hand.length == r){
                 if (total_hand[j] == name[i]){
-                    if (tab_copy.includes(total_hand[j]) && j-len >=0){ 
-                        console.log(j-len)
-                        tab_copy.splice(j-len, 1);
+                    if (tab_copy.includes(total_hand[j])){ 
+                        var k = 0
+                        var l = tab_copy.length
+                        while (tab_copy.length == l){
+                            if (tab_copy[k]==total_hand[j]){
+                                tab_copy.splice(k,1);
+                            }
+                            k += 1;
+                        }
                     }
                     total_hand.splice(j,1);
                 }
@@ -91,7 +97,6 @@ function enter_letter(letters, hands, tableaux, n) {
             if (tableaux[n][row].length != 0){
                 var row_split_copy = [...tableaux[n][row]]
                 hands[n] = hands[n].concat(row_split_copy)
-                console.log(hands[n])
             }
             readline.question(`${hands[n]} :`, name => {
 
@@ -119,6 +124,7 @@ function enter_letter(letters, hands, tableaux, n) {
                     //Si il ne peut pas jouer ce mot
                     } else {
                         console.log("Invalide")
+                        hands[n].splice(len, hands[n].length -len);
                     };
 
                     enter_letter(letters, hands, tableaux, n)
