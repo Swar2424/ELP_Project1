@@ -14,7 +14,6 @@ function tableau_to_str(tableau) {
 }
 
 
-//Mélanger la pioche de mots
 function shuffle(array) {
     let currentIndex = array.length,  randomIndex;
 
@@ -77,21 +76,21 @@ function end_game(tableaux) {
             i += 1
         }
     }
-    var writeable = ""
+    var writer = ""
     
     console.log(`Point Player 1 : ${point_total[0]} | Point Player 2 : ${point_total[1]}`)
     if (point_total[0] > point_total[1]){
-        writeable += `Player 1 won !!!`
+        writer += `Player 1 won !!!`
         console.log(`Player 1 won !!!`)
     } else {
-        writeable += `Player 2 won !!!\n\n`
+        writer += `Player 2 won !!!\n\n`
         console.log(`Player 2 won !!!`)
     }
-    writeable += `Point Player 1 : ${point_total[0]} | Point Player 2 : ${point_total[1]}\n\n`
+    writer += `Point Player 1 : ${point_total[0]} | Point Player 2 : ${point_total[1]}\n\n`
 
-    writeable += tableau_to_str(tableaux[n]) + tableau_to_str(tableaux[(n+1)%2])
-    writeable 
-    fs.writeFile('./data.txt', writeable, err => {
+    writer += "Player 1 :\n" + tableau_to_str(tableaux[0]) + "Player 2 :\n" + tableau_to_str(tableaux[1])
+    writer 
+    fs.writeFile('./data.txt', writer, err => {
         if (err) {
             console.error(err);
         } else {
@@ -221,7 +220,6 @@ function player_turn(letters, hands, tableaux, n, jarnac) {
                                 player_turn(letters, hands, tableaux, (n+1)%2, false)
                             }
                         });
-                        console.log("\nJarnac func end", n)
                     } else {
                         console.log("\nEnd of JARNAC !\n")
                         player_turn(letters, hands, tableaux, (n+1)%2, false)
@@ -233,7 +231,6 @@ function player_turn(letters, hands, tableaux, n, jarnac) {
                 };
         });
     }
-    console.log("\nend func", n)
 }
 
 
@@ -261,4 +258,3 @@ hands[1] = pioche.splice(0, 6)
 
 console.log(`\n----------------------------------------------------------------\nPlayer 1 is playing\n`)
 player_turn(pioche, hands, tableaux, 0)
-console.log("\nend program")
