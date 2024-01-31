@@ -77,20 +77,36 @@ function end_game(tableaux) {
             i += 1
         }
     }
+    var writeable = ""
+    
     console.log(`Point Player 1 : ${point_total[0]} | Point Player 2 : ${point_total[1]}`)
     if (point_total[0] > point_total[1]){
+        writeable += `Player 1 won !!!`
         console.log(`Player 1 won !!!`)
     } else {
+        writeable += `Player 2 won !!!\n\n`
         console.log(`Player 2 won !!!`)
     }
+    writeable += `Point Player 1 : ${point_total[0]} | Point Player 2 : ${point_total[1]}\n\n`
 
+    writeable += tableau_to_str(tableaux[n]) + tableau_to_str(tableaux[(n+1)%2])
+    writeable 
+    fs.writeFile('./data.txt', writeable, err => {
+        if (err) {
+            console.error(err);
+        } else {
+            // file written successfully
+        }
+        });
+
+    process.exit()
 }
 
 
 function player_turn(letters, hands, tableaux, n, jarnac) {
 
     //Si le jeu est fini
-    if (tableaux[n][3].length != 0 || tableaux[(n+1)%2][3].length != 0) {
+    if (tableaux[n][7].length != 0 || tableaux[(n+1)%2][7].length != 0) {
         end_game(tableaux)
     } else {
         console.log(`${hands[n]}`)
@@ -149,7 +165,7 @@ function player_turn(letters, hands, tableaux, n, jarnac) {
                                             
                                             //Écrire dans le fichier
                                             var writeable = tableau_to_str(tableaux[n]) + tableau_to_str(tableaux[(n+1)%2])
-                                            fs.writeFile('./test.txt', writeable, err => {
+                                            fs.writeFile('./data.txt', writeable, err => {
                                                 if (err) {
                                                     console.error(err);
                                                 } else {
@@ -162,7 +178,7 @@ function player_turn(letters, hands, tableaux, n, jarnac) {
                                             tableaux[n][row] = name
                                             hands[n].push(letters.splice(0, 1)[0])
                                             var writeable = tableau_to_str(tableaux[n]) + tableau_to_str(tableaux[(n+1)%2])
-                                            fs.writeFile('./test.txt', writeable, err => {
+                                            fs.writeFile('./data.txt', writeable, err => {
                                                 if (err) {
                                                     console.error(err);
                                                 } else {
@@ -205,6 +221,7 @@ function player_turn(letters, hands, tableaux, n, jarnac) {
                                 player_turn(letters, hands, tableaux, (n+1)%2, false)
                             }
                         });
+                        console.log("\nJarnac func end", n)
                     } else {
                         console.log("\nEnd of JARNAC !\n")
                         player_turn(letters, hands, tableaux, (n+1)%2, false)
@@ -216,6 +233,7 @@ function player_turn(letters, hands, tableaux, n, jarnac) {
                 };
         });
     }
+    console.log("\nend func", n)
 }
 
 
@@ -243,3 +261,4 @@ hands[1] = pioche.splice(0, 6)
 
 console.log(`\n----------------------------------------------------------------\nPlayer 1 is playing\n`)
 player_turn(pioche, hands, tableaux, 0)
+console.log("\nend program")
