@@ -68,13 +68,28 @@ function not_lettres(hand, tableau, name, len) {
 function end_game(tableaux) {
     console.log("\n-----------------------------------------------------------------\nEND OF THE GAME\n\n")
     console.log(`${tableau_to_str(tableaux[0])}\n${tableau_to_str(tableaux[1])}\n`)
+    var point_total = [0,0]
+    for (n = 0; n < 2; n +=1){
+        var i = 0
+        while (i < tableaux[n].length && tableaux[n][i].length != 0){
+            point = tableaux[n][i].length
+            point_total[n] += point**2
+            i += 1
+        }
+    }
+    console.log(`Point Player 1 : ${point_total[0]} | Point Player 2 : ${point_total[1]}`)
+    if (point_total[0] > point_total[1]){
+        console.log(`Player 1 won !!!`)
+    } else {
+        console.log(`Player 2 won !!!`)
+    }
 
 }
 
 
 function enter_letter(letters, hands, tableaux, n, jarnac) {
     //prise de l'input
-    if (tableaux[n][7].length != 0 || tableaux[(n+1)%2][7].length != 0) {
+    if (tableaux[n][3].length != 0 || tableaux[(n+1)%2][3].length != 0) {
         end_game(tableaux)
     } else {
         console.log(`${hands[n]}`)
@@ -90,70 +105,75 @@ function enter_letter(letters, hands, tableaux, n, jarnac) {
                             }
                             //Il faudrait lui demander le numéro du joueur à partir du joueur 2
                             readline.question(`${hands[n]} | ${row_split_copy} : `, name => {
-                                hands[n] = hands[n].concat(row_split_copy)
-                                rep = not_lettres(hands[n], tableaux[n][row], name, len)
-                                hands[n] = rep[1]
+                                if (name.length >= 3){
+                                    hands[n] = hands[n].concat(row_split_copy)
+                                    rep = not_lettres(hands[n], tableaux[n][row], name, len)
+                                    hands[n] = rep[1]
 
-                            //Si il peut jouer ce mot
-                            if (rep[0]) {
-                                console.log(`Word played by ${i+1} : ${name}`)
+                                    //Si il peut jouer ce mot
+                                    if (rep[0]) {
+                                        console.log(`Word played by ${i+1} : ${name}`)
 
-                                if (jarnac) {
+                                        if (jarnac) {
 
-                                    //Ajouter le mot dans notre tableau
-                                    var replacing = true
-                                    j = 0
-                                    while (replacing) {
-                                        if (tableaux[(n+1)%2][j].length == 0) {
-                                            tableaux[(n+1)%2][j] = name
-                                            replacing = false
+                                            //Ajouter le mot dans notre tableau
+                                            var replacing = true
+                                            j = 0
+                                            while (replacing) {
+                                                if (tableaux[(n+1)%2][j].length == 0) {
+                                                    tableaux[(n+1)%2][j] = name
+                                                    replacing = false
+                                                }
+                                                j += 1
+                                            }
+
+                                        //Enlever le mot du tableau adverse
+                                        replacing = true
+                                        k = row
+                                        while (replacing) {
+                                            if (tableaux[n][k+1].length == 0){
+                                                tableaux[n][k] = []
+                                                replacing = false
+                                            } else {
+                                                tableaux[n][k] = [...tableaux[n][k+1]]
+                                                k += 1
+                                            }
                                         }
-                                        j += 1
+
+                                        var writeable = tableau_to_str(tableaux[n]) + tableau_to_str(tableaux[(n+1)%2])
+                                        fs.writeFile('./test.txt', writeable, err => {
+                                            if (err) {
+                                            console.error(err);
+                                            } else {
+                                            // file written successfully
+                                            }
+                                            });
+
+                                    } else {
+                                        tableaux[n][row] = name
+                                        hands[n].push(letters.splice(0, 1)[0])
+                                        var writeable = tableau_to_str(tableaux[n]) + tableau_to_str(tableaux[(n+1)%2])
+                                        fs.writeFile('./test.txt', writeable, err => {
+                                            if (err) {
+                                            console.error(err);
+                                            } else {
+                                            // file written successfully
+                                            }
+                                            });
                                     }
 
-                                    //Enlever le mot du tableau adverse
-                                    replacing = true
-                                    k = row
-                                    while (replacing) {
-                                        if (tableaux[n][k+1].length == 0){
-                                            tableaux[n][k] = []
-                                            replacing = false
-                                        } else {
-                                            tableaux[n][k] = [...tableaux[n][k+1]]
-                                            k += 1
-                                        }
-                                    }
-
-                                    var writeable = tableau_to_str(tableaux[n]) + tableau_to_str(tableaux[(n+1)%2])
-                                    fs.writeFile('./test.txt', writeable, err => {
-                                        if (err) {
-                                        console.error(err);
-                                        } else {
-                                        // file written successfully
-                                        }
-                                        });
-
+                                    enter_letter(letters, hands, tableaux, n, jarnac)
+                                    
+                                    //Si il ne peut pas jouer ce mot
+                                    } else {
+                                        console.log("\nInvalide !\n")
+                                        hands[n].splice(len, hands[n].length -len);
+                                        enter_letter(letters, hands, tableaux, n, false)
+                                    };
                                 } else {
-                                    tableaux[n][row] = name
-                                    hands[n].push(letters.splice(0, 1)[0])
-                                    var writeable = tableau_to_str(tableaux[n]) + tableau_to_str(tableaux[(n+1)%2])
-                                    fs.writeFile('./test.txt', writeable, err => {
-                                        if (err) {
-                                        console.error(err);
-                                        } else {
-                                        // file written successfully
-                                        }
-                                        });
-                                }
-
-                                enter_letter(letters, hands, tableaux, n, jarnac)
-                                
-                            //Si il ne peut pas jouer ce mot
-                            } else {
-                                console.log("\nInvalide !\n")
-                                hands[n].splice(len, hands[n].length -len);
-                                enter_letter(letters, hands, tableaux, n, false)
-                            };  
+                                    console.log("\nInvalide !\n")
+                                    enter_letter(letters, hands, tableaux, n, false)
+                                }  
                         });
                     } else {
                         console.log("\nInvalide !\n")
@@ -182,7 +202,7 @@ function enter_letter(letters, hands, tableaux, n, jarnac) {
                         
                 } else {
                     console.log("\nInvalide !\n")
-                    enter_letter(letters, hands, tableaux, n, false)
+                    enter_letter(letters, hands, tableaux, n, jarnac)
                 };
         });
     }
