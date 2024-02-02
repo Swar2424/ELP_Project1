@@ -48,45 +48,47 @@ function player_turn(letters, hands, tableaux, n, jarnac) {
                                 if (name.length >= 3){
                                     hands[n] = hands[n].concat(row_split_copy)
                                     rep = check.Check_word(hands[n], tableaux[n][row], name, len)
-                                    hands[n] = rep[1]
-
-                                    if (rep[0]) {
-                                        console.log(`Word played by ${i+1} : ${name}`)
-
-                                        if (jarnac) {
-
-                                            var replacing = true
-                                            j = 0
-                                            while (replacing) {
-                                                if (tableaux[(n+1)%2][j].length == 0) {
-                                                    tableaux[(n+1)%2][j] = name
-                                                    replacing = false
+                                    rep.then( rep => {
+                                        hands[n] = rep[1]
+                                        if (rep[0]) {
+                                            console.log(`Word played by ${i+1} : ${name}`)
+    
+                                            if (jarnac) {
+    
+                                                var replacing = true
+                                                j = 0
+                                                while (replacing) {
+                                                    if (tableaux[(n+1)%2][j].length == 0) {
+                                                        tableaux[(n+1)%2][j] = name
+                                                        replacing = false
+                                                    }
+                                                    j += 1
                                                 }
-                                                j += 1
-                                            }
-
-                                            replacing = true
-                                            k = row
-                                            while (replacing) {
-                                                if (tableaux[n][k+1].length == 0){
-                                                    tableaux[n][k] = []
-                                                    replacing = false
-                                                } else {
-                                                    tableaux[n][k] = [...tableaux[n][k+1]]
-                                                    k += 1
+    
+                                                replacing = true
+                                                k = row
+                                                while (replacing) {
+                                                    if (tableaux[n][k+1].length == 0){
+                                                        tableaux[n][k] = []
+                                                        replacing = false
+                                                    } else {
+                                                        tableaux[n][k] = [...tableaux[n][k+1]]
+                                                        k += 1
+                                                    }
                                                 }
+                                            } else {
+                                                tableaux[n][row] = name
+                                                hands[n].push(letters.splice(0, 1)[0])
                                             }
+                                            player_turn(letters, hands, tableaux, n, jarnac)
+                                        
                                         } else {
-                                            tableaux[n][row] = name
-                                            hands[n].push(letters.splice(0, 1)[0])
-                                        }
-                                        player_turn(letters, hands, tableaux, n, jarnac)
-                                    
-                                    } else {
-                                        console.log("\nInvalide !\n")
-                                        hands[n].splice(len, hands[n].length -len);
-                                        player_turn(letters, hands, tableaux, n, jarnac)
-                                    };
+                                            console.log("\nInvalide !\n")
+                                            hands[n].splice(len, hands[n].length -len);
+                                            player_turn(letters, hands, tableaux, n, jarnac)
+                                        };
+                                    })
+                                     
                                 } else {
                                     console.log("\nInvalide !\n")
                                     player_turn(letters, hands, tableaux, n, jarnac)

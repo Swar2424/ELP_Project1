@@ -1,4 +1,7 @@
-function Check_word(hand, tableau, name, len) {
+const { checkPrime } = require("crypto");
+const dico = require("./Dico.js")
+
+async function Check_word(hand, tableau, name, len) {
     var rep = true
     var total_hand = [...hand]
     var tab_copy = [...tableau]
@@ -18,9 +21,12 @@ function Check_word(hand, tableau, name, len) {
             total_hand.splice(j,1);
         }
     };
-    if (tab_copy.length != 0 || name.length <= tableau.length){
-        rep = false;
-    }
+    dico.get_word(name).then( word =>{
+        if (tab_copy.length != 0 || name.length <= tableau.length || word != name){
+            rep = false;
+        }
+    })
+    
     if (rep) {
         return [rep, total_hand] 
     } else {
@@ -28,4 +34,16 @@ function Check_word(hand, tableau, name, len) {
     }
 }
 
+
 module.exports = { Check_word };
+/*
+hands = ['m', 'n', 's', 'p', 'i', 'e']
+noun = "pie"
+len = 6
+tableaux = [[[],[],[],[],[],[],[],[]],[[],[],[],[],[],[],[],[]]]
+tableau = tableaux[0][1]
+verif = Check_word(hands, tableau, noun, len)
+verif.then(
+    result => console.log(result[1]) 
+)
+*/

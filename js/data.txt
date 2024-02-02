@@ -1,19 +1,18 @@
-Player 1 won !!!
-
-Point Player 1 : 50 | Point Player 2 : 0
-
 Player 1 :
+a,i,l,t
 - - - - - - - - - - - - - - - -
-ebi
-hoip
-rshe
-csv
+zen
+
+
+
 
 
 
 
 - - - - - - - - - - - - - - - -
+
 Player 2 :
+i,r,n,e,d,o
 - - - - - - - - - - - - - - - -
 
 
