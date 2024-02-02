@@ -1,7 +1,7 @@
 Player 1 :
-c,c,e
+t,e,b,r,s
 - - - - - - - - - - - - - - - -
-roof
+mae
 
 
 
@@ -12,10 +12,10 @@ roof
 - - - - - - - - - - - - - - - -
 
 Player 2 :
-e,a,a
+e,i,r,a,n,e
 - - - - - - - - - - - - - - - -
-pro
-gap
+
+
 
 
 

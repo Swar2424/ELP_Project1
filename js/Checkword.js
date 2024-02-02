@@ -25,20 +25,21 @@ function Check_word(hand, tableau, name, len) {
         }
     };
     dico.get_word(name).then( word =>{
-        if (tab_copy.length != 0 || name.length <= tableau.length || word != name){
+        if (tab_copy.length != 0 || name.length <= tableau.length || word == 'error'){
             rep = false;
+            if (rep) {
+                back = [rep, total_hand] 
+            } else {
+                back = [rep, hand] 
+            }
         }
+        return back
     })
-    
-    if (rep) {
-        return [rep, total_hand] 
-    } else {
-        return [rep, hand] 
-    }
 }
 
 
 module.exports = { Check_word };
+
 
 hands = ['m', 'n', 's', 'p', 'i', 'e']
 noun = "pie"
@@ -47,8 +48,4 @@ tableaux = [[[],[],[],[],[],[],[],[]],[[],[],[],[],[],[],[],[]]]
 tableau = tableaux[0][1]
 verif = Check_word(hands, tableau, noun, len)
 console.log(verif)
-/*verif.then(
-    result => console.log(result[1]) 
-)
-*/
 
