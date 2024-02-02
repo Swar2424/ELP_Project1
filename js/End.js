@@ -1,6 +1,9 @@
 const fs = require('node:fs');
 const tool = require("./Tools.js")
 
+//Fonction appelée à la fin du jeu, chargée d'afficher les scores et de déterminer le vainqueur ;
+//Prends en paramètre les tableaux complets des deux joueurs dans la liste <tableaux> ;
+//Met fin au programme
 function end_game(tableaux) {
     console.log("\n-----------------------------------------------------------------\nEND OF THE GAME\n\n")
     var point_total = [0,0]

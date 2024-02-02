@@ -1,3 +1,4 @@
+//Convertit <tableau> une liste de strings en un unique string <writeable> prêt à être affiché ;
 function table_to_str(tableau) {
     var writeable = "- - - - - - - - - - - - - - - -\n"
     for (j=0 ; (j<tableau.length) ; j+=1) {
@@ -7,6 +8,8 @@ function table_to_str(tableau) {
     return writeable
 }
 
+
+//Mélange une liste de valeurs <array> et renvoie le résultat
 function shuffle(array) {
     let currentIndex = array.length,  randomIndex;
 

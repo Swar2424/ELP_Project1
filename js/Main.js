@@ -8,7 +8,9 @@ const readline = require('node:readline').createInterface({
 });
 
 
-//Fonction implémentant readline avec Promise
+//Fonction implémentant readline avec Promise ;
+//Prend en paramètre le string <questions> affiché lors de la demande de l'input ;
+//Renvoie la Promise associé à l'événement de l'input
 function ask(questions) {
     return new Promise(resolve => {
         readline.question(questions, input => resolve(input));
@@ -16,7 +18,9 @@ function ask(questions) {
 }
 
 
-//Fonction principale du programme, récursive tant que le jeu n'est pas fini
+//Fonction principale du programme, récursive tant que le jeu n'est pas fini ;
+//Prend en paramètre <letters> la pile de lettres à piocher, <hands> la liste des deux listes qui sont les mains des deux joueurs ;
+//<tableaux> qui contient les deux tableaux des joueurs, <n> le numéro du joueur actuel, <jarnac> qui indique si un jarnac est en cours
 function player_turn(letters, hands, tableaux, n, jarnac) {
 
     if (tableaux[0][7].length != 0 || tableaux[1][7].length != 0) {
@@ -129,6 +133,7 @@ function player_turn(letters, hands, tableaux, n, jarnac) {
 const lettres = [["a", 14], ["b", 4], ["c", 7] , ["d",5], ["e",19], ["f",2], ["g",4], ["h",2], ["i",11], 
     ["j",1], ["k",1], ["l",6], ["m",5], ["n",9], ["o",8], ["p",4], ["q", 1], ["r", 10], ["s", 7], 
     ["t", 9], ["u", 8], ["v", 2], ["w", 1], ["x", 1], ["y", 1], ["z", 2]]
+
 let pioche = []
 for (i=0; i < lettres.length; i += 1 ){
     let l = lettres[i][0], nb = lettres[i][1];
