@@ -163,7 +163,7 @@ view model =
       , h2 [style "text-align" "center", style "color" "green"] [text (if result.reveal_word then ("\n It's " ++ result.wordToFind ++ " !\n") else "")]
       , pre [] (createDef result.listdef 1)
       , div [style "text-align" "center"] [ h1 [] [viewValidation model, viewInput "wordToGuess" "Enter the word to guess" result.wordToGuess WordToGuess],
-          button [ onClick Checkbox ] [ text "Reveal word ?" ], pre [] [text "\n\r"],
+          button [ onClick Checkbox ] [ text "Reveal word ?" ], pre [] [text ""],
           button [ onClick (GotText (Ok result.listwords)) ] [ text "Reroll word ?" ], pre [] [text "\n\r"]]
       ]
 
