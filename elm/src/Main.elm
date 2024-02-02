@@ -33,11 +33,12 @@ type Model
   = Failure
   | Loading
   | FullText String
-  | OneWord String
+  | OneWord String String
   | SuccessDef { wordToFind : String
   , wordToGuess : String
   , listdef : (List Def)
-  , reveal_word : Bool}
+  , reveal_word : Bool
+  , listwords : String}
   | FailureJSON
 
 
@@ -80,8 +81,8 @@ update msg model =
           (Failure, Cmd.none)
         
     RandomNumber x -> case model of
-          FullText words -> case OneWord (randomWord x (String.split " " words)) of
-            OneWord word -> (OneWord word, 
+          FullText words -> case OneWord (randomWord x (String.split " " words)) words of
+            OneWord word listword -> (OneWord word listword, 
               Http.get
                 { url = ("https://api.dictionaryapi.dev/api/v2/entries/en/" ++ (word))
                 , expect = Http.expectJson GotDef defDecoder
@@ -95,13 +96,19 @@ update msg model =
 
           Failure -> (Failure, Cmd.none)
           Loading -> (Failure, Cmd.none)
-          OneWord _ -> (Failure, Cmd.none)
+          OneWord _ _ -> (Failure, Cmd.none)
           SuccessDef _ -> (Failure, Cmd.none)
           FailureJSON -> (Failure, Cmd.none)
 
     GotDef result -> case result of
         Ok def -> case def of
-          (x::_) -> (SuccessDef {wordToGuess = "", wordToFind = x.word, listdef = def, reveal_word = False}, Cmd.none)
+          (x::_) -> case model of
+              Failure -> (Failure, Cmd.none)
+              Loading -> (Failure, Cmd.none)
+              FullText _ -> (Failure, Cmd.none)
+              SuccessDef _ -> (Failure, Cmd.none)
+              FailureJSON -> (Failure, Cmd.none)
+              OneWord word listwords-> (SuccessDef {wordToGuess = "", wordToFind = word, listdef = def, reveal_word = False, listwords = listwords}, Cmd.none)
           [] -> (FailureJSON, Cmd.none)
         Err _ -> (FailureJSON, Cmd.none)
     
@@ -111,7 +118,7 @@ update msg model =
       FullText _ -> (Failure, Cmd.none)
       SuccessDef results -> (SuccessDef {results | wordToGuess = wordToGuess}, Cmd.none)
       FailureJSON -> (Failure, Cmd.none)
-      OneWord _ -> (Failure, Cmd.none)
+      OneWord _ _-> (Failure, Cmd.none)
     
     Checkbox -> case model of 
       Failure -> (Failure, Cmd.none)
@@ -119,7 +126,7 @@ update msg model =
       FullText _ -> (Failure, Cmd.none)
       SuccessDef results -> (SuccessDef {results | reveal_word = not results.reveal_word}, Cmd.none)
       FailureJSON -> (Failure, Cmd.none)
-      OneWord _ -> (Failure, Cmd.none)
+      OneWord _ _ -> (Failure, Cmd.none)
       
 
           
@@ -148,7 +155,7 @@ view model =
     FullText _ ->
       text "Loading word..."
 
-    OneWord _ ->
+    OneWord _ _ ->
       text "Loading def..."
 
     SuccessDef result -> div []
@@ -156,7 +163,8 @@ view model =
       , h2 [style "text-align" "center", style "color" "green"] [text (if result.reveal_word then ("\n It's " ++ result.wordToFind ++ " !\n") else "")]
       , pre [] (createDef result.listdef 1)
       , div [style "text-align" "center"] [ h1 [] [viewValidation model, viewInput "wordToGuess" "Enter the word to guess" result.wordToGuess WordToGuess],
-          button [ onClick Checkbox ] [ text "Reveal word ?" ], pre [] [text "\n\r"]]
+          button [ onClick Checkbox ] [ text "Reveal word ?" ], pre [] [text "\n\r"],
+          button [ onClick (GotText (Ok result.listwords)) ] [ text "Reroll word ?" ], pre [] [text "\n\r"]]
       ]
 
 
@@ -177,6 +185,6 @@ viewValidation model = case model of
       div [ style "color" "red" ] [ text "Find the word" ]
   Failure -> div [ style "color" "orange" ] [ text "Error" ]
   Loading -> div [ style "color" "orange" ] [ text "Error" ]
-  OneWord _ -> div [ style "color" "orange" ] [ text "Error" ]
+  OneWord _ _ -> div [ style "color" "orange" ] [ text "Error" ]
   FailureJSON -> div [ style "color" "orange" ] [ text "Error" ]
   FullText _ -> div [ style "color" "orange" ] [ text "Error" ]
