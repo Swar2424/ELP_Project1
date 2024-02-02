@@ -1,8 +1,8 @@
 Player 1 :
-t,e,b,r,s
+e,a
 - - - - - - - - - - - - - - - -
-mae
-
+gets
+pub
 
 
 
@@ -12,7 +12,7 @@ mae
 - - - - - - - - - - - - - - - -
 
 Player 2 :
-e,i,r,a,n,e
+e,c,r,m,u,u,o
 - - - - - - - - - - - - - - - -
 
 

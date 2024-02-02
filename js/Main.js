@@ -51,9 +51,9 @@ function player_turn(letters, hands, tableaux, n, jarnac) {
                             ask(`${hands[n]} | ${row_split_copy} : `).then(name => {
                                 if (name.length >= 3){
                                     hands[n] = hands[n].concat(row_split_copy)
-                                    rep = check.Check_word(hands[n], tableaux[n][row], name, len)
-                                    hands[n] = rep[1]
-                                    if (rep[0]) {
+                                    check.Check_word(hands[n], tableaux[n][row], name, len).then(rep =>{
+                                        hands[n] = rep[1];
+                                        if (rep[0]) {
                                         console.log(`Word played by ${i+1} : ${name}`)
 
                                         if (jarnac) {
@@ -85,11 +85,15 @@ function player_turn(letters, hands, tableaux, n, jarnac) {
                                         }
                                         player_turn(letters, hands, tableaux, n, jarnac)
                                     
+                                    
                                     } else {
                                         console.log("\nInvalide !\n")
                                         hands[n].splice(len, hands[n].length -len);
                                         player_turn(letters, hands, tableaux, n, jarnac)
                                     };
+                                    })
+
+                                    
                                      
                                 } else {
                                     console.log("\nInvalide !\n")

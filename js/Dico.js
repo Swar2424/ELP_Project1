@@ -9,9 +9,5 @@ async function get_word(name) {
     return word
 }
 
-get_word('noun').then(
-    word => console.log(word)
-)
-
 
 module.exports = {get_word};
