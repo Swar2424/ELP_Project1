@@ -1,7 +1,10 @@
 const { checkPrime } = require("crypto");
 const dico = require("./Dico.js")
-
-async function Check_word(hand, tableau, name, len) {
+//Vérifie si un mot peut être joué dans une ligne du tableau ; 
+//Prend en paramètre la main du joueur, la ligne du tableau concernée, le mot joué et la taille de la main du joueur ;
+//Renvoie <true> et la nouvelle main du joueur si le mot peut être joué ;
+//Renvoie <false> et la main initiale du joueur sinon
+function Check_word(hand, tableau, name, len) {
     var rep = true
     var total_hand = [...hand]
     var tab_copy = [...tableau]
@@ -36,14 +39,16 @@ async function Check_word(hand, tableau, name, len) {
 
 
 module.exports = { Check_word };
-/*
+
 hands = ['m', 'n', 's', 'p', 'i', 'e']
 noun = "pie"
 len = 6
 tableaux = [[[],[],[],[],[],[],[],[]],[[],[],[],[],[],[],[],[]]]
 tableau = tableaux[0][1]
 verif = Check_word(hands, tableau, noun, len)
-verif.then(
+console.log(verif)
+/*verif.then(
     result => console.log(result[1]) 
 )
 */
+

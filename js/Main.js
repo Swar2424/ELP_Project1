@@ -8,7 +8,9 @@ const readline = require('node:readline').createInterface({
 });
 
 
-//Fonction implémentant readline avec Promise
+//Fonction implémentant readline avec Promise ;
+//Prend en paramètre le string <questions> affiché lors de la demande de l'input ;
+//Renvoie la Promise associé à l'événement de l'input
 function ask(questions) {
     return new Promise(resolve => {
         readline.question(questions, input => resolve(input));
@@ -16,7 +18,9 @@ function ask(questions) {
 }
 
 
-//Fonction principale du programme, récursive tant que le jeu n'est pas fini
+//Fonction principale du programme, récursive tant que le jeu n'est pas fini ;
+//Prend en paramètre <letters> la pile de lettres à piocher, <hands> la liste des deux listes qui sont les mains des deux joueurs ;
+//<tableaux> qui contient les deux tableaux des joueurs, <n> le numéro du joueur actuel, <jarnac> qui indique si un jarnac est en cours
 function player_turn(letters, hands, tableaux, n, jarnac) {
 
     if (tableaux[0][7].length != 0 || tableaux[1][7].length != 0) {
@@ -48,46 +52,44 @@ function player_turn(letters, hands, tableaux, n, jarnac) {
                                 if (name.length >= 3){
                                     hands[n] = hands[n].concat(row_split_copy)
                                     rep = check.Check_word(hands[n], tableaux[n][row], name, len)
-                                    rep.then( rep => {
-                                        hands[n] = rep[1]
-                                        if (rep[0]) {
-                                            console.log(`Word played by ${i+1} : ${name}`)
-    
-                                            if (jarnac) {
-    
-                                                var replacing = true
-                                                j = 0
-                                                while (replacing) {
-                                                    if (tableaux[(n+1)%2][j].length == 0) {
-                                                        tableaux[(n+1)%2][j] = name
-                                                        replacing = false
-                                                    }
-                                                    j += 1
+                                    hands[n] = rep[1]
+                                    if (rep[0]) {
+                                        console.log(`Word played by ${i+1} : ${name}`)
+
+                                        if (jarnac) {
+
+                                            var replacing = true
+                                            j = 0
+                                            while (replacing) {
+                                                if (tableaux[(n+1)%2][j].length == 0) {
+                                                    tableaux[(n+1)%2][j] = name
+                                                    replacing = false
                                                 }
-    
-                                                replacing = true
-                                                k = row
-                                                while (replacing) {
-                                                    if (tableaux[n][k+1].length == 0){
-                                                        tableaux[n][k] = []
-                                                        replacing = false
-                                                    } else {
-                                                        tableaux[n][k] = [...tableaux[n][k+1]]
-                                                        k += 1
-                                                    }
-                                                }
-                                            } else {
-                                                tableaux[n][row] = name
-                                                hands[n].push(letters.splice(0, 1)[0])
+                                                j += 1
                                             }
-                                            player_turn(letters, hands, tableaux, n, jarnac)
-                                        
+
+                                            replacing = true
+                                            k = row
+                                            while (replacing) {
+                                                if (tableaux[n][k+1].length == 0){
+                                                    tableaux[n][k] = []
+                                                    replacing = false
+                                                } else {
+                                                    tableaux[n][k] = [...tableaux[n][k+1]]
+                                                    k += 1
+                                                }
+                                            }
                                         } else {
-                                            console.log("\nInvalide !\n")
-                                            hands[n].splice(len, hands[n].length -len);
-                                            player_turn(letters, hands, tableaux, n, jarnac)
-                                        };
-                                    })
+                                            tableaux[n][row] = name
+                                            hands[n].push(letters.splice(0, 1)[0])
+                                        }
+                                        player_turn(letters, hands, tableaux, n, jarnac)
+                                    
+                                    } else {
+                                        console.log("\nInvalide !\n")
+                                        hands[n].splice(len, hands[n].length -len);
+                                        player_turn(letters, hands, tableaux, n, jarnac)
+                                    };
                                      
                                 } else {
                                     console.log("\nInvalide !\n")
@@ -131,6 +133,7 @@ function player_turn(letters, hands, tableaux, n, jarnac) {
 const lettres = [["a", 14], ["b", 4], ["c", 7] , ["d",5], ["e",19], ["f",2], ["g",4], ["h",2], ["i",11], 
     ["j",1], ["k",1], ["l",6], ["m",5], ["n",9], ["o",8], ["p",4], ["q", 1], ["r", 10], ["s", 7], 
     ["t", 9], ["u", 8], ["v", 2], ["w", 1], ["x", 1], ["y", 1], ["z", 2]]
+
 let pioche = []
 for (i=0; i < lettres.length; i += 1 ){
     let l = lettres[i][0], nb = lettres[i][1];
