@@ -1,10 +1,5 @@
 module Main exposing (..)
 
--- Make a GET request to load a book called "Public Opinion"
---
--- Read how it works:
---   https://guide.elm-lang.org/effects/http.html
---
 
 import Decoder_json exposing (..)
 import Def_writer exposing (..)
@@ -21,7 +16,6 @@ import Html.Events exposing (onInput, onClick)
 
 -- MAIN
 
-
 main : Program () Model Msg
 main =
   Browser.element
@@ -35,7 +29,6 @@ main =
 
 -- MODEL
 
-
 type Model
   = Failure
   | Loading
@@ -48,15 +41,19 @@ type Model
   | FailureJSON
 
 
-type alias Def = { word : String,
-  meanings : List Meaning
-  }
 
-type alias Meaning =
-    { definitions : List String,
-      partOfSpeech : String
-    }
+-- MSG
 
+type Msg
+  = GotText (Result Http.Error String)
+  | RandomNumber Int
+  | GotDef (Result Http.Error (List Def))
+  | WordToGuess String
+  | Checkbox
+
+
+
+-- INIT
 
 init : () -> (Model, Cmd Msg)
 init _ =
@@ -70,16 +67,6 @@ init _ =
 
 
 -- UPDATE
-
-
-type Msg
-  = GotText (Result Http.Error String)
-  | RandomNumber Int
-  | GotDef (Result Http.Error (List Def))
-  | WordToGuess String
-  | Checkbox
-
-
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -136,11 +123,7 @@ update msg model =
       
 
           
-
-
-
 -- SUBSCRIPTIONS
-
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
@@ -149,7 +132,6 @@ subscriptions _ =
 
 
 -- VIEW
-
 
 view : Model -> Html Msg
 view model =
@@ -161,29 +143,31 @@ view model =
       text "No dico"
 
     Loading ->
-      text "Loading..."
+      text "Loading word..."
 
-    FullText fullText ->
-      pre [] [ text fullText ]
+    FullText _ ->
+      text "Loading word..."
 
-    OneWord word ->
-      pre [] [ text ("https://api.dictionaryapi.dev/api/v2/entries/en/" ++ (word)) ]
+    OneWord _ ->
+      text "Loading def..."
 
     SuccessDef result -> div []
       [ h1 [style "text-align" "center"] [text ("Guess the word    (～￣▽￣)～")]
       , h2 [style "text-align" "center", style "color" "green"] [text (if result.reveal_word then ("\n It's " ++ result.wordToFind ++ " !\n") else "")]
       , pre [] (createDef result.listdef 1)
       , div [style "text-align" "center"] [ h1 [] [viewValidation model, viewInput "wordToGuess" "Enter the word to guess" result.wordToGuess WordToGuess],
-          button [ onClick Checkbox ] [ text "Reveal word ?" ], pre [] [text "\n\r\n\r"]]
+          button [ onClick Checkbox ] [ text "Reveal word ?" ], pre [] [text "\n\r"]]
       ]
 
 
 
+-- Définition de la zone d'input
 viewInput : String -> String -> String -> (String -> msg) -> Html msg
 viewInput t p v toMsg =
   input [ type_ t, placeholder p, value v, onInput toMsg ] []
 
 
+-- Définition du comportement en fonction du contenu de la zone d'input
 viewValidation : Model -> Html msg
 viewValidation model = case model of
   SuccessDef result ->
@@ -191,8 +175,8 @@ viewValidation model = case model of
       div [ style "color" "green" ] [ text "Niiice, well done !!" ]
     else
       div [ style "color" "red" ] [ text "Find the word" ]
-  Failure -> div [ style "color" "green" ] [ text "Bruh" ]
-  Loading -> div [ style "color" "green" ] [ text "Bruh" ]
-  OneWord _ -> div [ style "color" "green" ] [ text "Bruh" ]
-  FailureJSON -> div [ style "color" "green" ] [ text "Bruh" ]
-  FullText _ -> div [ style "color" "green" ] [ text "Bruh" ]
+  Failure -> div [ style "color" "orange" ] [ text "Error" ]
+  Loading -> div [ style "color" "orange" ] [ text "Error" ]
+  OneWord _ -> div [ style "color" "orange" ] [ text "Error" ]
+  FailureJSON -> div [ style "color" "orange" ] [ text "Error" ]
+  FullText _ -> div [ style "color" "orange" ] [ text "Error" ]
