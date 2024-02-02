@@ -19,11 +19,20 @@ function ask(questions) {
 //Fonction principale du programme, récursive tant que le jeu n'est pas fini
 function player_turn(letters, hands, tableaux, n, jarnac) {
 
-    if (tableaux[n][3].length != 0 || tableaux[(n+1)%2][3].length != 0) {
+    if (tableaux[0][7].length != 0 || tableaux[1][7].length != 0) {
         end.end_game(tableaux)
+
     } else {
+        writeable = "Player 1 :\n" + hands[0].toString() + "\n" + tool.table_to_str(tableaux[0])
+        writeable += "\nPlayer 2 :\n" + hands[1].toString() + "\n" + tool.table_to_str(tableaux[1])
+        fs.writeFile('./data.txt', writeable, err => {
+            if (err) {
+                console.error(err);
+            } else {
+            }
+            });
         console.log(`${hands[n]}`)
-        ask(`${tool.table_to_str(tableaux[n])}\nPlay (p) or end turn (e) : `).then(choix => {
+        ask(`\nPlay (p) or end turn (e) : `).then(choix => {
             if (choix=="p"){
 
                 ask(`Choose row : `).then(row => {
@@ -67,27 +76,9 @@ function player_turn(letters, hands, tableaux, n, jarnac) {
                                                     k += 1
                                                 }
                                             }
-
-                                            var writeable = tool.table_to_str(tableaux[n]) + tool.table_to_str(tableaux[(n+1)%2])
-                                            fs.writeFile('./data.txt', writeable, err => {
-                                                if (err) {
-                                                    console.error(err);
-                                                } else {
-                                                    // file written successfully
-                                                }
-                                                });
-
                                         } else {
                                             tableaux[n][row] = name
                                             hands[n].push(letters.splice(0, 1)[0])
-                                            var writeable = tool.table_to_str(tableaux[n]) + tool.table_to_str(tableaux[(n+1)%2])
-                                            fs.writeFile('./data.txt', writeable, err => {
-                                                if (err) {
-                                                    console.error(err);
-                                                } else {
-                                                    // file written successfully
-                                                }
-                                                });
                                         }
                                         player_turn(letters, hands, tableaux, n, jarnac)
                                     
@@ -111,7 +102,7 @@ function player_turn(letters, hands, tableaux, n, jarnac) {
                     if (!jarnac) {
                         console.log(`\n----------------------------------------------------------------\nPlayer ${(n+1)%2+1} is playing\n`)
 
-                        ask(`${hands[n]}\n${tool.table_to_str(tableaux[n])}\nCall Jarnac ? (y/n) : `).then(jarnac_ask => {
+                        ask(`\nCall Jarnac ? (y/n) : `).then(jarnac_ask => {
                             hands[(n+1)%2].push(letters.splice(0, 1)[0])
                             if (jarnac_ask == "y") {
                                 console.log("\nJARNAC !\n")

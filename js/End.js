@@ -3,7 +3,6 @@ const tool = require("./Tools.js")
 
 function end_game(tableaux) {
     console.log("\n-----------------------------------------------------------------\nEND OF THE GAME\n\n")
-    console.log(`${tool.table_to_str(tableaux[0])}\n${tool.table_to_str(tableaux[1])}\n`)
     var point_total = [0,0]
     for (n = 0; n < 2; n +=1){
         var i = 0
@@ -13,29 +12,24 @@ function end_game(tableaux) {
             i += 1
         }
     }
-    var writer = ""
+    var writeable = ""
     
-    console.log(`Point Player 1 : ${point_total[0]} | Point Player 2 : ${point_total[1]}`)
     if (point_total[0] > point_total[1]){
-        writer += `Player 1 won !!!`
-        console.log(`Player 1 won !!!`)
+        writeable += `Player 1 won !!!\n\n`
     } else {
-        writer += `Player 2 won !!!\n\n`
-        console.log(`Player 2 won !!!`)
+        writeable += `Player 2 won !!!\n\n`
     }
-    writer += `Point Player 1 : ${point_total[0]} | Point Player 2 : ${point_total[1]}\n\n`
+    writeable += `Point Player 1 : ${point_total[0]} | Point Player 2 : ${point_total[1]}\n\n`
 
-    writer += "Player 1 :\n" + tool.table_to_str(tableaux[0]) + "Player 2 :\n" + tool.table_to_str(tableaux[1])
-    writer 
-    fs.writeFile('./data.txt', writer, err => {
+    writeable += "Player 1 :\n" + tool.table_to_str(tableaux[0]) + "Player 2 :\n" + tool.table_to_str(tableaux[1])
+    
+    fs.writeFile('./data.txt', writeable, err => {
         if (err) {
             console.error(err);
         } else {
-            // file written successfully
+            process.exit()
         }
         });
-
-    process.exit()
 }
 
 module.exports = { end_game };
