@@ -22,7 +22,7 @@ function end_game(tableaux) {
     } else {
         writeable += `Player 2 won !!!\n\n`
     }
-    writeable += `Point Player 1 : ${point_total[0]} | Point Player 2 : ${point_total[1]}\n\n`
+    writeable += `Player 1 Points : ${point_total[0]} | Player 2 Points : ${point_total[1]}\n\n`
 
     writeable += "Player 1 :\n" + tool.table_to_str(tableaux[0]) + "Player 2 :\n" + tool.table_to_str(tableaux[1])
     

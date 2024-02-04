@@ -116,6 +116,7 @@ function player_turn(letters, hands, tableaux, n, jarnac) {
                                 console.log("\nJARNAC !\n")
                                 player_turn(letters, hands, tableaux, n, true)
                             } else {
+                                console.log("\n")
                                 player_turn(letters, hands, tableaux, (n+1)%2, false)
                             }
                         });

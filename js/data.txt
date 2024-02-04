@@ -1,23 +1,24 @@
+Player 1 won !!!
+
+Point Player 1 : 116 | Point Player 2 : 59
+
 Player 1 :
-e,a
 - - - - - - - - - - - - - - - -
-gets
-pub
-
-
-
-
-
-
+brats
+sumo
+barn
+tern
+pan
+axe
+darn
+coo
 - - - - - - - - - - - - - - - -
-
 Player 2 :
-e,c,r,m,u,u,o
 - - - - - - - - - - - - - - - -
-
-
-
-
+tic
+germ
+jog
+salad
 
 
 

@@ -1,6 +1,8 @@
 const { checkPrime } = require("crypto");
+
 //Vérifie si un mot peut être joué dans une ligne du tableau ; 
 //Prend en paramètre la main du joueur, la ligne du tableau concernée, le mot joué et la taille de la main du joueur ;
+//Vérifications : lettres utilisées, mot existant dans le dictionnaire...
 //Renvoie <true> et la nouvelle main du joueur si le mot peut être joué ;
 //Renvoie <false> et la main initiale du joueur sinon
 async function Check_word(hand, tableau, name, len) {
